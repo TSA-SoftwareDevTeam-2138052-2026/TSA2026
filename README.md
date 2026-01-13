@@ -3,5 +3,3 @@
 this is a test commit!
 
 contrast_screen
-
-
