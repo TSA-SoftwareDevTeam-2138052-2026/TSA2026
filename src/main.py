@@ -3,6 +3,7 @@ import pyautogui
 import keyboard
 import time
 import numpy as np
+import pygetwindow as gw
 
 def take_and_show_screenshot():
     
@@ -16,7 +17,14 @@ def take_and_show_screenshot():
     # Render the window    
     image = cv2.imread("image.png", 0)
     cv2.imshow("tsa_project_screenshot", image)
-    keyboard.press_and_release("alt+shift+tab")
+    windows = gw.getWindowsWithTitle("tsa_project_screenshot")
+    if windows != []:
+        window = windows[0]
+        try:
+            window.activate()
+        except Exception as e:
+            window.minimize()
+            window.maximize()
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     
