@@ -12,7 +12,6 @@ while True:
             r.adjust_for_ambient_noise(source, duration=0.2)
             audio = r.listen(source)
             text = r.recognize_google(audio)
-            text = text.lower()  
             print("You said:", text)
             
             if "exit" in text:
