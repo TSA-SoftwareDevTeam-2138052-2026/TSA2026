@@ -1,16 +1,13 @@
 import requests # To get the file
 import pathlib # to get home
-import os # to check directory
+import os # to check os name
+import subprocess # to run ffmpeg to check
 
-ffmpeg_path = pathlib.Path.home()._str + "/ffmpeg"
+ffmpeg_path = pathlib.Path.home()._str + "/ffmpeg" if os.name == "nt" else "native"
 
 def download_ffmpeg():
-    while True:
-        if os.name == 'nt':
-            if pathlib.Path.exists(ffmpeg_path):
-                for item in os.scandir(ffmpeg_path):
-                    if item.name.split(".")[0].lower() == "ffmpeg":
-                        return "FFMPEG INSTALLED"
-
-                
-            ffmpeg_download = requests.get("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
+    if ffmpeg_path != "native":
+        try:
+            subprocess.run(['ffmpeg'])
+        
+ffmpeg_download = requests.get("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
