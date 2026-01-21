@@ -9,5 +9,7 @@ def download_ffmpeg():
     if ffmpeg_path != "native":
         try:
             subprocess.run(['ffmpeg'])
-        
-ffmpeg_download = requests.get("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
+        except FileNotFoundError:
+            ffmpeg_download = requests.get("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
+    else:
+        print("ERROR: Unable to Find FFMPEG. This isn't a Windows system so ")
