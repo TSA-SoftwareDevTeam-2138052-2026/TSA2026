@@ -1,11 +1,11 @@
 import keyboard
 import time
-import PyVisualHelp
-import FFMPEG_handler
+from PyVisualHelp import screenshot
+from ffmpegManager import ffmpeg_manager
     
-keyboard.add_hotkey('ctrl+\\', PyVisualHelp.take_and_show_screenshot)
+keyboard.add_hotkey('ctrl+\\', screenshot.take_and_show_screenshot)
 
-FFMPEG_handler.download_ffmpeg()
+ffmpeg_manager.download_ffmpeg()
 
 while True:
     time.sleep(1)
