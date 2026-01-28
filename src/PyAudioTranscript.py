@@ -1,4 +1,4 @@
-#import speech_recognition as sr
+import speech_recognition as sr
 #recog = sr.Recognizer()
 #
 #from os import path
