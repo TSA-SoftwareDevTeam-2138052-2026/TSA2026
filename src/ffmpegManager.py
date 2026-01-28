@@ -13,21 +13,26 @@ class ffmpeg_manager():
     def download_ffmpeg(self):
         if self.ffmpeg_path != "native":
             try:
-                subprocess.run([f'{self.ffmpeg_path}/ffmpeg.exe'])
+                subprocess.run([f'{self.ffmpeg_path}/bin/ffmpeg.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                print("FOUND!")
+                return self.ffmpeg_path + "/bin/ffmpeg.exe"
             except FileNotFoundError:
                 print("Downloading ffmpeg to home/ffmpeg folder...")
                 import patoolib
                 path = self.download_file("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
-                patoolib.extract_archive(path, outdir=self.ffmpeg_path, verbosity=-1)
+                patoolib.extract_archive(path, outdir="temp", verbosity=-1)
                 os.remove(path)
                 print("Downloaded")
                 print("Final touches...")
                 current_dir = ""
-                for dirpath, dirnames, filenames in os.walk(self.ffmpeg_path):
+                for dirpath, dirnames, filenames in os.walk("temp"):
                     current_dir = dirnames[0]
                     break
                 import shutil
-                shutil.move()
+                shutil.move(f"temp/{current_dir}", self.ffmpeg_path)
+                print("DONE!")
+                os.remove(path)
+                return self.ffmpeg_path + "/bin/ffmpeg.exe"
         else:
             print("ERROR: Unable to Find FFMPEG. This isn't a Windows system so you will have to install it yourself.")
             
