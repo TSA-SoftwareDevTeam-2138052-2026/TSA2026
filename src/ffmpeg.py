@@ -2,24 +2,26 @@ import requests # To get the file
 import pathlib # to get home
 import os # to check os name
 import subprocess # to run ffmpeg to check
+import pathlib # to manage paths
 
-class ffmpeg_manager():
+class ffmpeg():
     def __init__(self):
         pass
     
     ffmpeg_path = pathlib.Path.home()._str + "/ffmpeg" if os.name == "nt" else "native"
     
     @classmethod
-    def download_ffmpeg(self):
-        if self.ffmpeg_path != "native":
+    def download_ffmpeg(cls) -> str:
+        if cls.ffmpeg_path != "native":
             try:
-                subprocess.run([f'{self.ffmpeg_path}/bin/ffmpeg.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                subprocess.run([f'{cls.ffmpeg_path}/bin/ffmpeg.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
                 print("FOUND!")
-                return self.ffmpeg_path + "/bin/ffmpeg.exe"
+                cls.ffmpeg_path = cls.ffmpeg_path + "/bin/ffmpeg.exe"
+                return cls.ffmpeg_path
             except FileNotFoundError:
                 print("Downloading ffmpeg to home/ffmpeg folder...")
                 import patoolib
-                path = self.download_file("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
+                path = cls._download_file("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
                 patoolib.extract_archive(path, outdir="temp", verbosity=-1)
                 os.remove(path)
                 print("Downloaded")
@@ -29,18 +31,28 @@ class ffmpeg_manager():
                     current_dir = dirnames[0]
                     break
                 import shutil
-                shutil.move(f"temp/{current_dir}", self.ffmpeg_path)
+                shutil.move(f"temp/{current_dir}", cls.ffmpeg_path)
                 print("DONE!")
                 os.remove(path)
-                return self.ffmpeg_path + "/bin/ffmpeg.exe"
+                cls.ffmpeg_path = cls.ffmpeg_path + "/bin/ffmpeg.exe"
+                return cls.ffmpeg_path
         else:
             print("ERROR: Unable to Find FFMPEG. This isn't a Windows system so you will have to install it yourself.")
-            
+            return ""
+    
+    @classmethod
+    def remove_video(cls, video_path: str) -> str:
+        video_path = video_path.strip("\"\'")
+        video_path_pathlib = pathlib.Path.resolve(pathlib.Path(video_path))
+        output = video_path_pathlib.parent._str + "/" + video_path_pathlib.name.split(".")[0] + ".wav"
+        subprocess.run([f'{cls.ffmpeg_path}', '-i', video_path_pathlib, output])
+        return output
+    
     # Source - https://stackoverflow.com/a/16696317
     # Posted by Roman Podlinov, modified by community. See post 'Timeline' for change history
     # Retrieved 2026-01-21, License - CC BY-SA 4.0
-
-    def download_file(url):
+    @classmethod
+    def _download_file(cls, url: str) -> str:
         local_filename = url.split('/')[-1]
         # NOTE the stream=True parameter below
         with requests.get(url, stream=True) as r:
