@@ -1,14 +1,14 @@
 import keyboard
 import time
 from PyVisualHelp import screenshot
-from ffmpeg import ffmpeg
+from ffmpeg_manager import ffmpeg_manager
     
 keyboard.add_hotkey('ctrl+\\', screenshot.take_and_show_screenshot)
 
-ffmpeg_path = ffmpeg.download_ffmpeg()
+ffmpeg_path = ffmpeg_manager.download_ffmpeg()
 print(ffmpeg_path)
 
-path_to_vid = ffmpeg.remove_video(input()) # demo for now, we will add actual file dialogs later.
+path_to_vid = ffmpeg_manager.remove_video(input()) # demo for now, we will add actual file dialogs later.
 
 from PyAudioTranscript import PyAudioTranscript
 

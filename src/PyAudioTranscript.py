@@ -17,3 +17,4 @@ class PyAudioTranscript():
     @classmethod
     def turn_into_transcript(cls, audio_file: str) -> str:
         transcription = cls.recognizer.transcribe(audio_file)
+        return str(transcription['text'])

@@ -4,7 +4,7 @@ import os # to check os name
 import subprocess # to run ffmpeg to check
 import pathlib # to manage paths
 
-class ffmpeg():
+class ffmpeg_manager():
     def __init__(self):
         pass
     
