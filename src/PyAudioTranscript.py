@@ -1,4 +1,4 @@
-import speech_recognition as sr
+import whisper
 #recog = sr.Recognizer()
 #
 #from os import path
@@ -12,9 +12,8 @@ import speech_recognition as sr
 # Real program here
 
 class PyAudioTranscript():
-    recognizer = sr.Recognizer()
+    recognizer = whisper.load_model("base")
     
     @classmethod
     def turn_into_transcript(cls, audio_file: str) -> str:
-        audio = sr.AudioData.from_file(audio_file)
-        return cls.recognizer.recognize_google(audio)
+        transcription = cls.recognizer.transcribe(audio_file)
