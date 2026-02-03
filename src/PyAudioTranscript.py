@@ -12,8 +12,9 @@ import whisper
 # Real program here
 
 class PyAudioTranscript():
+    
     @classmethod
-    def turn_into_transcript(self, audio_file: str, model="base") -> str:
+    def turn_into_transcript(cls, audio_file: str, model="base") -> str:
         recognizer = whisper.load_model(model)
         transcription = recognizer.transcribe(audio_file)
         return str(transcription['text'])
