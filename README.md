@@ -1,5 +1,5 @@
-# TSA2026
+# AudioVisual Helper
 
-this is a test commit!
+## TSA JUDGES INFO
 
-contrast_screen
+The program's code is in `main`, the branch that (hopefully) you should be on. This contains all the changes we have made.
