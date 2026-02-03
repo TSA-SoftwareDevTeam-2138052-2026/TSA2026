@@ -3,7 +3,7 @@ import pyautogui
 import pygetwindow as gw
 import os
 
-class screenshot():
+class screenshot:
     def __init__(self):
         pass
     
@@ -18,7 +18,7 @@ class screenshot():
 
         # Render the window    
         image = cv2.imread("screenshot.png", 0)
-        cv2.imshow("tsa_project_screenshot", image)
+        cv2.imshow("tsa_project_screenshot", image) # type: ignore # this is completely valid
         windows = gw.getWindowsWithTitle("tsa_project_screenshot")
         
         # Switch to the window
@@ -27,8 +27,11 @@ class screenshot():
             try:
                 window.activate()
             except Exception as e:
-                window.minimize()
-                window.maximize()
+                try:
+                    window.minimize()
+                    window.maximize()
+                except Exception as e:
+                    print("Error opening window:", e)
         
         # Now we wait for the user to press a key to close the window.
         cv2.waitKey(0)
