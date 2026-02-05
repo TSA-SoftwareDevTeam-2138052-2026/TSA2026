@@ -14,29 +14,6 @@ class ffmpeg_manager:
     @classmethod
     def download_ffmpeg(cls) -> None:
         if cls.ffmpeg_path != "native":
-            #try:
-            #    subprocess.run([f'{cls.ffmpeg_path}/bin/ffmpeg.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            #    print("FOUND!")
-            #    cls.ffmpeg_path = cls.ffmpeg_path + "/bin/ffmpeg.exe"
-            #    return cls.ffmpeg_path
-            #except FileNotFoundError:
-            #    print("Downloading ffmpeg to home/ffmpeg folder...")
-            #    import patoolib
-            #    path = cls._download_file("https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z")
-            #    patoolib.extract_archive(path, outdir="temp", verbosity=-1)
-            #    os.remove(path)
-            #    print("Downloaded")
-            #    print("Final touches...")
-            #    current_dir = ""
-            #    for dirpath, dirnames, filenames in os.walk("temp"):
-            #        current_dir = dirnames[0]
-            #        break
-            #    import shutil
-            #    shutil.move(f"temp/{current_dir}", cls.ffmpeg_path)
-            #    print("DONE!")
-            #    os.remove(path)
-            #    cls.ffmpeg_path = cls.ffmpeg_path + "/bin/ffmpeg.exe"
-            #    return cls.ffmpeg_path
             try:
                 subprocess.run(['ffmpeg', '-version'],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
                 print("FOUND!")
