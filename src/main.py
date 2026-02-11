@@ -8,12 +8,14 @@ import os # clearing the screen
 
 is_active = False
 
+print("Testing for GUI...")
 isGUI = True
 try:
     import pyautogui
     import pygetwindow as gw
     del pyautogui # delete the imports
     del gw # delete the imports
+    print("GUI GOOD")
 except:
     isGUI = False
     print("GUI CHECK FAILED")
