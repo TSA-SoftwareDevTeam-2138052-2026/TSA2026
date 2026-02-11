@@ -1,5 +1,7 @@
+print("Importing packages...")
 import keyboard # keyboard shortcuts
 import time # to wait before refreshing screen
+print("If the program seems like it is frozen, wait a few moments.")
 from PyVisualHelp import screenshot # screenshotting
 from ffmpeg_manager import ffmpeg_manager # ffmpeg managing
 from transcript_window import TranscriptWindow # Transcript Window opener
