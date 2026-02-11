@@ -8,6 +8,16 @@ import os # clearing the screen
 
 is_active = False
 
+isGUI = True
+try:
+    import pyautogui
+    import pygetwindow as gw
+    del pyautogui # delete the imports
+    del gw # delete the imports
+except:
+    isGUI = False
+    print("GUI CHECK FAILED")
+
 def save_transcript():
     is_active = True
     try:
@@ -27,8 +37,20 @@ def save_transcript():
         print("Error")
     is_active = False
 
-keyboard.add_hotkey('ctrl+\\', screenshot.take_and_show_screenshot)
-keyboard.add_hotkey('ctrl+shift+enter', callback=save_transcript) # type: ignore
+def handle_screenshot():
+    is_active=True
+    screenshot.take_and_show_screenshot()
+    is_active=False
+
+def handle_transcript():
+    is_active=True
+    save_transcript()
+    is_active=False
+
+if isGUI:
+    keyboard.add_hotkey('ctrl+\\', screenshot.take_and_show_screenshot)
+    keyboard.add_hotkey('ctrl+shift+enter', callback=save_transcript) # type: ignore
+
 
 ffmpeg_manager.download_ffmpeg()
 
@@ -39,6 +61,13 @@ while True:
         else:
             os.system('clear')
         print("GUIDE:")
-        print("Get Black-and-White Screenshot: Ctrl + \\")
-        print("Get Transcript: Ctrl + Shift + Enter")
-        time.sleep(1)
+        if isGUI:
+            print("Get Black-and-White Screenshot: Ctrl + \\")
+            print("Get Transcript: Ctrl + Shift + Enter")
+            time.sleep(1)
+        else:
+            print("Get Black-and-White Screenshot: UNAVALIABLE")
+            print("Get Transcript: type \"transcript\" into terminal")
+            if input("> ").lower() == "transcript":
+                handle_transcript()
+            time.sleep(1)
