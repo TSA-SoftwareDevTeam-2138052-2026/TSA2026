@@ -27,7 +27,7 @@ def save_transcript():
         file_dir = TranscriptWindow.show_file_dir()
         print("Transcribing...")
         with open(file_dir + "_transcript.txt", 'w') as file:
-            file.write(PyAudioTranscript.turn_into_transcript(file_dir))
+            file.write(str(PyAudioTranscript.turn_into_transcript(file_dir)))
             file.close()
         print("DONE!")
         

@@ -32,9 +32,14 @@ class PyAudioTranscript:
 
     @classmethod
     def turn_into_transcript(cls, audio_file: str, model="base") -> str:
+        audio = whisper.load_audio(audio_file)
         try:
             recognizer = whisper.load_model(model, device="gpu") # Try faster GPU processing
         except:
+            print("GPU failed. Trying CPU...")
             recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
-        transcription = whisper.transcribe(recognizer, audio_file, beam_size=5, best_of=5, temperature=(0.0, 0.2, 0.4, 0.6, 0.8, 1.0))
-        return cls.convert_timestamp_to_temp(transcription)
+        try:
+            transcription = whisper.transcribe(recognizer, audio)
+            return cls.convert_timestamp_to_temp(transcription)
+        except Exception as e:
+            return str(e)
