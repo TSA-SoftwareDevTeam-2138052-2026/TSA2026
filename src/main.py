@@ -23,7 +23,6 @@ except:
     print("GUI CHECK FAILED")
 
 def save_transcript():
-    is_active = True
     try:
         file_dir = TranscriptWindow.show_file_dir()
         print("Transcribing...")
@@ -39,31 +38,33 @@ def save_transcript():
         keyboard.wait('enter')
     except:
         print("Error")
-    is_active = False
 
 def handle_screenshot():
+    global is_active
     is_active=True
     screenshot.take_and_show_screenshot()
     is_active=False
 
 def handle_transcript():
+    global is_active
     is_active=True
     save_transcript()
     is_active=False
 
 if isGUI:
-    keyboard.add_hotkey('ctrl+\\', screenshot.take_and_show_screenshot)
-    keyboard.add_hotkey('ctrl+shift+enter', callback=save_transcript) # type: ignore
+    keyboard.add_hotkey('ctrl+\\', handle_screenshot)
+    keyboard.add_hotkey('ctrl+shift+enter', handle_transcript) # type: ignore
 
 
 ffmpeg_manager.download_ffmpeg()
 
 while True:
     if not is_active:
-        if os.name == "nt":
-            os.system('cls')
-        else:
-            os.system('clear')
+        #if os.name == "nt":
+        #    os.system('cls')
+        #else:
+        #    os.system('clear')
+        print("\033c") # Clears the screen
         print("GUIDE:")
         if isGUI:
             print("Get Black-and-White Screenshot: Ctrl + \\")
@@ -75,3 +76,5 @@ while True:
             if input("> ").lower() == "transcript":
                 handle_transcript()
             time.sleep(1)
+    elif is_active:
+        time.sleep(1)

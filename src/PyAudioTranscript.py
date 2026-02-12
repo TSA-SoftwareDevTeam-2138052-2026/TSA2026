@@ -27,6 +27,7 @@ class PyAudioTranscript:
                 #   start/end: word
                 # to the transcription
                 current_transcription = current_transcription + f"  {str(word['start'])}/{str(word['end'])}: {word['text']}\n"
+                print(current_transcription) #DEMO: TODO REMOVE LATER
         return current_transcription
 
     @classmethod
