@@ -38,8 +38,5 @@ class PyAudioTranscript:
         except:
             print("GPU failed. Trying CPU...")
             recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
-        try:
-            transcription = whisper.transcribe(recognizer, audio)
-            return cls.convert_timestamp_to_temp(transcription)
-        except Exception as e:
-            return str(e)
+        transcription = whisper.transcribe(recognizer, audio)
+        return cls.convert_timestamp_to_temp(transcription)
