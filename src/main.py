@@ -6,7 +6,7 @@ from PyVisualHelp import screenshot # screenshotting
 from ffmpeg_manager import ffmpeg_manager # ffmpeg managing
 from transcript_window import TranscriptWindow # Transcript Window opener
 from PyAudioTranscript import PyAudioTranscript # Getting transcript
-import os # clearing the screen
+import threading # makes it faster
 
 is_active = False
 
@@ -35,7 +35,7 @@ def save_transcript():
             print(file.read())
             file.close()
         print("Press enter to continue...")
-        keyboard.wait('enter')
+        time.sleep(9999999)
     except:
         print("Error")
 

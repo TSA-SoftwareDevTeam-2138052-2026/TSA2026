@@ -18,16 +18,16 @@ class PyAudioTranscript:
     @classmethod
     def convert_timestamp_to_temp(cls, transcription: dict) -> str:
         current_transcription = ""
+        print(current_transcription)
         for segment in transcription["segments"]:
             # Add segment id
-            current_transcription = current_transcription + str(segment[id]) + ":\n"
+            current_transcription = current_transcription + str(segment["id"]) + ":\n"
             # Add words
             for word in segment["words"]:
                 # adds:
                 #   start/end: word
                 # to the transcription
                 current_transcription = current_transcription + f"  {str(word['start'])}/{str(word['end'])}: {word['text']}\n"
-                print(current_transcription) #DEMO: TODO REMOVE LATER
         return current_transcription
 
     @classmethod
@@ -38,5 +38,8 @@ class PyAudioTranscript:
         except:
             print("GPU failed. Trying CPU...")
             recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
-        transcription = whisper.transcribe(recognizer, audio)
-        return cls.convert_timestamp_to_temp(transcription)
+        try:
+            transcription = whisper.transcribe(recognizer, audio)
+            return cls.convert_timestamp_to_temp(transcription)
+        except Exception as e:
+            return str(e)
