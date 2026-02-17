@@ -7,6 +7,7 @@ from ffmpeg_manager import ffmpeg_manager # ffmpeg managing
 from transcript_window import TranscriptWindow # Transcript Window opener
 from PyAudioTranscript import PyAudioTranscript # Getting transcript
 import threading # makes it faster
+from captions import Captions
 
 is_active = False
 
@@ -32,10 +33,10 @@ def save_transcript():
         print("DONE!")
         
         with open(file_dir + "_transcript.txt", 'r') as file:
-            print(file.read())
+            print(Captions.convert_temp_to_captions(file.read()))
             file.close()
         print("Press enter to continue...")
-        time.sleep(9999999)
+        time.sleep(500)
     except:
         print("Error")
 

@@ -16,6 +16,7 @@ class Captions:
                     is_first = True
                 if line.startswith("  ") and is_in_segment:
                     if is_first:
+                        is_first = False
                         print("first")
                         time = line.split(":")[0].split("/")[0]
                         seconds_left = float(time)
@@ -31,8 +32,8 @@ class Captions:
                                     minutes -= 0
                                     hours += 1
                         if len(str(hours)) <= 2:
-                            current_captions = current_captions + f"{hours:02}:{minutes:02}:{seconds_left:.3f}"
+                            current_captions = current_captions + f"{hours:02}:{minutes:02}:{seconds_left:.3f} --> "
                         else:
-                            current_captions = current_captions + f"{hours}:{minutes:02}:{seconds_left:.3f}"
+                            current_captions = current_captions + f"{hours}:{minutes:02}:{seconds_left:.3f} --> "
                         
         return current_captions
