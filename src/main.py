@@ -27,13 +27,31 @@ def save_transcript():
     try:
         file_dir = TranscriptWindow.show_file_dir()
         print("Transcribing...")
-        with open(file_dir + "_transcript.txt", 'w') as file:
+        with open(file_dir + ".txt", 'w') as file:
             file.write(str(PyAudioTranscript.turn_into_transcript(file_dir)))
             file.close()
         print("DONE!")
         
-        with open(file_dir + "_transcript.txt", 'r') as file:
-            print(Captions.convert_temp_to_captions(file.read()))
+        choice = input("SRT or VTT?\nIf unsure, choose SRT. Type S or V for SRT and VTT.\n> ").lower()
+        
+        ext = ""
+        
+        if choice == "v":
+            ext = "vtt"
+        elif choice == "s":
+            ext = "srt"
+        else:
+            ext = "srt"
+        
+        auto_find = file_dir.split("\\")[-1].split(".")[0]
+        file_dir2 = file_dir.split("\\").copy()
+        file_dir2[-1] = auto_find
+        auto_find_dir = "\\".join(file_dir2)
+        
+        with open(file_dir + ".txt", 'r') as file:
+            with open(auto_find_dir  + "." + ext, "w") as caption_file:
+                caption_file.write(Captions.convert_temp_to_captions(file.read(), ext))
+                caption_file.close()
             file.close()
         print("Press enter to continue...")
         time.sleep(500)
