@@ -10,8 +10,8 @@ class Captions:
             else:
                 seconds_left -= 60
                 minutes += 1
-                if minutes - 60 <= 0:
-                    minutes -= 0
+                if minutes - 60 >= 0:
+                    minutes = 0
                     hours += 1
                 print(seconds_left)
                 print(minutes)

@@ -8,6 +8,7 @@ from transcript_window import TranscriptWindow # Transcript Window opener
 from PyAudioTranscript import PyAudioTranscript # Getting transcript
 import threading # makes it faster
 from captions import Captions
+import os # to auto delete temp
 
 is_active = False
 
@@ -27,12 +28,18 @@ def save_transcript():
     try:
         file_dir = TranscriptWindow.show_file_dir()
         print("Transcribing...")
+        
+        auto_find = file_dir.split("/")[-1].split(".")[0]
+        file_dir2 = file_dir.split("/").copy()
+        file_dir2[-1] = auto_find
+        auto_find_dir = "/".join(file_dir2)
+        
         with open(file_dir + ".txt", 'w') as file:
             file.write(str(PyAudioTranscript.turn_into_transcript(file_dir)))
             file.close()
         print("DONE!")
         
-        choice = input("SRT or VTT?\nIf unsure, choose SRT. Type S or V for SRT and VTT.\n> ").lower()
+        choice = TranscriptWindow.ask_for_subtitle_type().lower()
         
         ext = ""
         
@@ -43,18 +50,15 @@ def save_transcript():
         else:
             ext = "srt"
         
-        auto_find = file_dir.split("\\")[-1].split(".")[0]
-        file_dir2 = file_dir.split("\\").copy()
-        file_dir2[-1] = auto_find
-        auto_find_dir = "\\".join(file_dir2)
-        
         with open(file_dir + ".txt", 'r') as file:
             with open(auto_find_dir  + "." + ext, "w") as caption_file:
                 caption_file.write(Captions.convert_temp_to_captions(file.read(), ext))
                 caption_file.close()
             file.close()
-        print("Press enter to continue...")
-        time.sleep(500)
+        
+        os.remove(file_dir + ".txt")
+        print("returning...")
+        time.sleep(2)
     except:
         print("Error")
 
