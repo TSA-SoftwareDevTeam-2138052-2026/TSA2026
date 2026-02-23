@@ -1,4 +1,5 @@
 import whisper_timestamped as whisper
+from PySide6.QtCore import QRunnable
 #recog = sr.Recognizer()
 #
 #from os import path
@@ -11,7 +12,7 @@ import whisper_timestamped as whisper
 
 # Real program here
 
-class PyAudioTranscript:
+class PyAudioTranscript(QRunnable):
     # file is as so:
     # id:
     #   start/end: word
