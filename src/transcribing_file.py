@@ -22,17 +22,29 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(600, 100)
+        Dialog.resize(300, 100)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
         self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.label = QLabel(Dialog)
-        self.label.setObjectName(u"label")
+        self.transcription_text = QLabel(Dialog)
+        self.transcription_text.setObjectName(u"transcription_text")
+        font = QFont()
+        font.setPointSize(12)
+        font.setWeight(QFont.DemiBold)
+        font.setKerning(True)
+        self.transcription_text.setFont(font)
 
-        self.verticalLayout.addWidget(self.label)
+        self.verticalLayout.addWidget(self.transcription_text)
 
         self.progressBar = QProgressBar(Dialog)
         self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setValue(24)
+        self.progressBar.setMaximum(0)
+        self.progressBar.setValue(0)
+        self.progressBar.setTextVisible(False)
 
         self.verticalLayout.addWidget(self.progressBar)
 
@@ -44,6 +56,6 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"Transcribing [FILE]...", None))
+        self.transcription_text.setText(QCoreApplication.translate("Dialog", u"Transcribing [FILE]...", None))
     # retranslateUi
 
