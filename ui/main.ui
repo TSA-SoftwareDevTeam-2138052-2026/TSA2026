@@ -90,7 +90,85 @@
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuChange_Model">
+     <property name="title">
+      <string>Change Transcription Model</string>
+     </property>
+     <addaction name="action_set_tiny"/>
+     <addaction name="action_set_base"/>
+     <addaction name="action_set_small"/>
+     <addaction name="action_set_medium"/>
+     <addaction name="action_set_large"/>
+     <addaction name="action_set_turbo"/>
+    </widget>
+    <addaction name="menuChange_Model"/>
+   </widget>
+   <addaction name="menuOptions"/>
+  </widget>
+  <action name="action_set_tiny">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>tiny (fastest/least accurate)</string>
+   </property>
+  </action>
+  <action name="action_set_base">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>base</string>
+   </property>
+  </action>
+  <action name="action_set_small">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>small</string>
+   </property>
+  </action>
+  <action name="action_set_medium">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>medium</string>
+   </property>
+  </action>
+  <action name="action_set_large">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>large (slowest/most accurate)</string>
+   </property>
+  </action>
+  <action name="action_set_turbo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>turbo (large but faster)</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

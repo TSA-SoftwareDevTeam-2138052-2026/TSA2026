@@ -11,12 +11,14 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QPushButton,
-    QSizePolicy, QStatusBar, QVBoxLayout, QWidget)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QMenu,
+    QMenuBar, QPushButton, QSizePolicy, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -24,6 +26,25 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(600, 200)
         MainWindow.setMinimumSize(QSize(400, 200))
+        self.action_set_tiny = QAction(MainWindow)
+        self.action_set_tiny.setObjectName(u"action_set_tiny")
+        self.action_set_tiny.setCheckable(True)
+        self.action_set_base = QAction(MainWindow)
+        self.action_set_base.setObjectName(u"action_set_base")
+        self.action_set_base.setCheckable(True)
+        self.action_set_base.setChecked(True)
+        self.action_set_small = QAction(MainWindow)
+        self.action_set_small.setObjectName(u"action_set_small")
+        self.action_set_small.setCheckable(True)
+        self.action_set_medium = QAction(MainWindow)
+        self.action_set_medium.setObjectName(u"action_set_medium")
+        self.action_set_medium.setCheckable(True)
+        self.action_set_large = QAction(MainWindow)
+        self.action_set_large.setObjectName(u"action_set_large")
+        self.action_set_large.setCheckable(True)
+        self.action_set_turbo = QAction(MainWindow)
+        self.action_set_turbo.setObjectName(u"action_set_turbo")
+        self.action_set_turbo.setCheckable(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -67,9 +88,23 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addLayout(self.verticalLayout)
 
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusBar = QStatusBar(MainWindow)
-        self.statusBar.setObjectName(u"statusBar")
-        MainWindow.setStatusBar(self.statusBar)
+        self.menuBar = QMenuBar(MainWindow)
+        self.menuBar.setObjectName(u"menuBar")
+        self.menuBar.setGeometry(QRect(0, 0, 600, 33))
+        self.menuOptions = QMenu(self.menuBar)
+        self.menuOptions.setObjectName(u"menuOptions")
+        self.menuChange_Model = QMenu(self.menuOptions)
+        self.menuChange_Model.setObjectName(u"menuChange_Model")
+        MainWindow.setMenuBar(self.menuBar)
+
+        self.menuBar.addAction(self.menuOptions.menuAction())
+        self.menuOptions.addAction(self.menuChange_Model.menuAction())
+        self.menuChange_Model.addAction(self.action_set_tiny)
+        self.menuChange_Model.addAction(self.action_set_base)
+        self.menuChange_Model.addAction(self.action_set_small)
+        self.menuChange_Model.addAction(self.action_set_medium)
+        self.menuChange_Model.addAction(self.action_set_large)
+        self.menuChange_Model.addAction(self.action_set_turbo)
 
         self.retranslateUi(MainWindow)
 
@@ -78,6 +113,12 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.action_set_tiny.setText(QCoreApplication.translate("MainWindow", u"tiny (fastest/least accurate)", None))
+        self.action_set_base.setText(QCoreApplication.translate("MainWindow", u"base", None))
+        self.action_set_small.setText(QCoreApplication.translate("MainWindow", u"small", None))
+        self.action_set_medium.setText(QCoreApplication.translate("MainWindow", u"medium", None))
+        self.action_set_large.setText(QCoreApplication.translate("MainWindow", u"large (slowest/most accurate)", None))
+        self.action_set_turbo.setText(QCoreApplication.translate("MainWindow", u"turbo (large but faster)", None))
 #if QT_CONFIG(tooltip)
         self.openMagnify.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>Opens a menu that allows you to magnify the screen.</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
@@ -87,5 +128,7 @@ class Ui_MainWindow(object):
         self.openMagnify.setText(QCoreApplication.translate("MainWindow", u"Open Magnification Menu...", None))
         self.contrast.setText(QCoreApplication.translate("MainWindow", u"Contrast Screenshot", None))
         self.transcribe.setText(QCoreApplication.translate("MainWindow", u"Transcribe...", None))
+        self.menuOptions.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
+        self.menuChange_Model.setTitle(QCoreApplication.translate("MainWindow", u"Change Transcription Model", None))
     # retranslateUi
 
