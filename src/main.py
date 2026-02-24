@@ -2,7 +2,7 @@ print("Importing packages...")
 import keyboard # keyboard shortcuts
 import time # to wait before refreshing screen
 print("If the program seems like it is frozen, wait a few moments.")
-from PyVisualHelp import screenshot # screenshotting
+from PyVisualHelp import Screenshot # screenshotting
 from ffmpeg_manager import ffmpeg_manager # ffmpeg managing
 from transcript_window import TranscriptWindow # Transcript Window opener
 from PyAudioTranscript import PyAudioTranscript # Getting transcript
@@ -65,7 +65,7 @@ def save_transcript():
 def handle_screenshot():
     global is_active
     is_active=True
-    screenshot.take_and_show_screenshot()
+    Screenshot.take_and_show_screenshot()
     is_active=False
 
 def handle_transcript():

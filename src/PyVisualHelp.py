@@ -7,7 +7,7 @@ try:
 except:
     isGUI = False
     print("ERROR IMPORTING GUI UTILS")
-class screenshot:
+class Screenshot:
     def __init__(self):
         pass
     

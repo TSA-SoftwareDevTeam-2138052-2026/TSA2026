@@ -18,7 +18,6 @@ class PyAudioTranscript:
     @classmethod
     def convert_timestamp_to_temp(cls, transcription: dict) -> str:
         current_transcription = ""
-        print(current_transcription)
         for segment in transcription["segments"]:
             # Add segment id
             current_transcription = current_transcription + str(segment["id"]) + ":\n"
