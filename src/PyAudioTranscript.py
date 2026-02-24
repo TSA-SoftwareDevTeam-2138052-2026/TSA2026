@@ -1,5 +1,4 @@
 import whisper_timestamped as whisper
-from PySide6.QtCore import QRunnable
 #recog = sr.Recognizer()
 #
 #from os import path

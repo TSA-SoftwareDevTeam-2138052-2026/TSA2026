@@ -12,7 +12,7 @@ class Worker(QRunnable):
     @Slot()
     def run(self):
         try:
-            result = self.fn(self.args, self.kwargs)
+            result = self.fn(*self.args, **self.kwargs)
         except Exception as e:
             self.signals.error.emit(e)
         else:
