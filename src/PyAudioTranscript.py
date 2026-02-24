@@ -12,7 +12,7 @@ from PySide6.QtCore import QRunnable
 
 # Real program here
 
-class PyAudioTranscript(QRunnable):
+class PyAudioTranscript:
     # file is as so:
     # id:
     #   start/end: word
