@@ -49,3 +49,7 @@ class Screenshot:
                 os.remove("screenshot.png") # delete for privacy
         else:
             print("This item is not avaliable due to the lack of GUI.")
+
+class Magnify:
+    def __init__(self):
+        pass

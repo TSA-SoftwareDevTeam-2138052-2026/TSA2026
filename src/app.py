@@ -6,11 +6,12 @@ from PyAudioTranscript import PyAudioTranscript
 from captions import Captions
 from PyVisualHelp import Screenshot
 
-from MainUI import Ui_MainWindow
+import MainUI
 import transcribing_file
+import MagnifierUI
 from Worker import Worker
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # init
     def __init__(self):
         super().__init__()
@@ -37,8 +38,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         # Below are all the buttons being mapped
         self.action_set_tiny.triggered.connect(lambda triggered: self.set_model(triggered, 0))
-        self.action_set_small.triggered.connect(lambda triggered: self.set_model(triggered, 1))
-        self.action_set_base.triggered.connect(lambda triggered: self.set_model(triggered, 2))
+        self.action_set_small.triggered.connect(lambda triggered: self.set_model(triggered, 2))
+        self.action_set_base.triggered.connect(lambda triggered: self.set_model(triggered, 1))
         self.action_set_medium.triggered.connect(lambda triggered: self.set_model(triggered, 3))
         self.action_set_large.triggered.connect(lambda triggered: self.set_model(triggered, 4))
         self.action_set_turbo.triggered.connect(lambda triggered: self.set_model(triggered, 5))
@@ -50,15 +51,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file_dialog.setFileMode(file_dialog.FileMode.ExistingFile)
         file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home()._str + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
         
-        # make a worker to transcribe the file and start it
-        worker = Worker(self.caption_file, file_name, self.model)
-        worker.signals.finished.connect(self.show_done_transcript)
-        self.threadpool.start(worker)
-        
         # Show a dialog to start it
         self.transcribing = TranscribingDialog()
+        worker = Worker(self.caption_file, file_name, self.model)
+        worker.signals.finished.connect(self.show_done_transcript)
+        # Show a dialog to start it
         self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+        self.threadpool.start(worker)
         self.transcribing.exec()
+
     
     def caption_file(self, file_name, model_name) -> bool:
         # Turn the file into a transcript
@@ -67,7 +68,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         # get the base name
         file_split = file_name.split(".")
         file_split.pop(-1)
-        print(".".join(file_split))
         
         # Save the captions to a vtt
         with open(".".join(file_split) + ".vtt", "w") as file:
@@ -101,6 +101,13 @@ class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+# The magnifier window.
+class MagnifyDialog(MagnifierUI.Ui_Dialog, QtWidgets.QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.magnify.connect
 
 app = QtWidgets.QApplication(sys.argv)
 
