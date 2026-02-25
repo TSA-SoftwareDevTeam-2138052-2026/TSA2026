@@ -1,24 +1,34 @@
 import sys
 from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer
+from PySide6.QtGui import QPixmap, QImage, QWindow, QTransform
 import pathlib # to get home
 from PyAudioTranscript import PyAudioTranscript
 from captions import Captions
-from PyVisualHelp import Screenshot
+import PyVisualHelp
 
 import MainUI
 import transcribing_file
 import MagnifierUI
 from Worker import Worker
+import os
+
+data_location = pathlib.Path.home()._str.replace("\\","/") + "/.audiovisualhelp/"
+
+if not os.path.exists(data_location):
+    os.makedirs(data_location)
 
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # init
     def __init__(self):
         super().__init__()
+        self.screenshot_util = PyVisualHelp.Screenshot(data_location)
+        self.magnify_util = PyVisualHelp.Magnify(data_location)
         self.setupUi(self)
         self.model = "base" # current model to transcribe with
         self.transcribe.clicked.connect(self.transcribe_item) # click transcribe button = transcription
-        self.contrast.clicked.connect(Screenshot.take_and_show_screenshot) # click contrast button = screenshot with contrast
+        self.contrast.clicked.connect(self.screenshot_util.take_and_show_screenshot) # click contrast button = screenshot with contrast
+        self.openMagnify.clicked.connect(self.open_magnify_dialog)
         self.threadpool = QThreadPool() # make a threadpool to run workers
         self.__setup_actions__() # setup the actoins
     
@@ -95,6 +105,17 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     def destroy_transcribing(self):
         self.transcribing.destroy()
         del self.timer
+        
+    def open_magnify_dialog(self):
+        self.magnify_dialog = MagnifyDialog()
+        self.magnify_dialog.magnify.clicked.connect(self.magnify)
+        self.magnify_dialog.exec()
+    
+    def magnify(self):
+        self.magnify_util.take_screenshot()
+        magnify_window = MagnifyWin(data_location + "screenshot.png")
+        print("showing full")
+        print("show")
 
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
@@ -107,7 +128,18 @@ class MagnifyDialog(MagnifierUI.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.magnify.connect
+
+class MagnifyWin(QtWidgets.QMainWindow):
+    def __init__(self, image):
+        print("Init win")
+        super().__init__()
+        self.gv = QtWidgets.QGraphicsView()
+        self.scene = QtWidgets.QGraphicsScene()
+        self.label = QtWidgets.QLabel()
+        self.image = QImage(image)
+        self.label.setPixmap(QPixmap.fromImage(self.image))
+        self.setCentralWidget(self.label)
+        self.show()
 
 app = QtWidgets.QApplication(sys.argv)
 
