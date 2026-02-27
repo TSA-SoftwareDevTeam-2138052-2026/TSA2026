@@ -6,7 +6,7 @@ import pathlib # to get home
 from PyAudioTranscript import PyAudioTranscript
 from captions import Captions
 import PyVisualHelp
-
+import keyboard # keyboard shortcuts
 import MainUI
 import transcribing_file
 import MagnifierUI
@@ -23,11 +23,12 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.screenshot_util = PyVisualHelp.Screenshot(data_location)
+        keyboard.add_hotkey("ctrl+\\", self.screenshot_util.contrast_screenshot, args=()) #type: ignore
         self.magnify_util = PyVisualHelp.Magnify(data_location)
         self.setupUi(self)
         self.model = "base" # current model to transcribe with
         self.transcribe.clicked.connect(self.transcribe_item) # click transcribe button = transcription
-        self.contrast.clicked.connect(self.screenshot_util.take_and_show_screenshot) # click contrast button = screenshot with contrast
+        self.contrast.clicked.connect(self.screenshot_util.contrast_screenshot) # click contrast button = screenshot with contrast
         self.openMagnify.clicked.connect(self.open_magnify_dialog)
         self.threadpool = QThreadPool() # make a threadpool to run workers
         self.__setup_actions__() # setup the actoins

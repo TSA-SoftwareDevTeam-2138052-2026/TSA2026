@@ -65,7 +65,7 @@ def save_transcript():
 def handle_screenshot():
     global is_active
     is_active=True
-    Screenshot.take_and_show_screenshot()
+    Screenshot.contrast_screenshot()
     is_active=False
 
 def handle_transcript():
