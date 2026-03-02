@@ -3,7 +3,6 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer
 from PySide6.QtGui import QPixmap, QImage, QWindow, QTransform
 import pathlib # to get home
-from PyAudioTranscript import PyAudioTranscript
 from captions import Captions
 import PyVisualHelp
 import keyboard # keyboard shortcuts
@@ -64,17 +63,28 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         
         # Show a dialog to start it
         self.transcribing = TranscribingDialog()
-        worker = Worker(self.caption_file, file_name, self.model)
-        worker.signals.finished.connect(self.show_done_transcript)
+        worker = Worker(self.check_for_transcribe, file_name, self.model)
         # Show a dialog to start it
-        self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+        self.transcribing.transcription_text.setText(f"Importing whisper...")
         self.threadpool.start(worker)
         self.transcribing.exec()
+
+    def check_for_transcribe(self, file_name, model_name):
+        try:
+            self.transcribe_util
+        except AttributeError: #attribute as opposed to name since it is an attribute
+            from PyAudioTranscript import PyAudioTranscript
+            self.transcribe_util = PyAudioTranscript()
+        worker = Worker(self.caption_file, file_name, model_name)
+        print("Worker")
+        self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+        worker.signals.finished.connect(self.show_done_transcript)
+        self.threadpool.start(worker)
 
     
     def caption_file(self, file_name, model_name) -> bool:
         # Turn the file into a transcript
-        temp: str = PyAudioTranscript.turn_into_transcript(file_name, model_name)
+        temp: str = self.transcribe_util.turn_into_transcript(file_name, model_name)
         
         # get the base name
         file_split = file_name.split(".")
