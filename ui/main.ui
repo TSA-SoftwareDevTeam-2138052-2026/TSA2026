@@ -82,7 +82,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Transcribe...</string>
+         <string>Captions...</string>
         </property>
        </widget>
       </item>

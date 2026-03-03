@@ -127,7 +127,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(whatsthis)
         self.openMagnify.setText(QCoreApplication.translate("MainWindow", u"Open Magnification Menu...", None))
         self.contrast.setText(QCoreApplication.translate("MainWindow", u"Contrast Screenshot", None))
-        self.transcribe.setText(QCoreApplication.translate("MainWindow", u"Transcribe...", None))
+        self.transcribe.setText(QCoreApplication.translate("MainWindow", u"Captions...", None))
         self.menuOptions.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
         self.menuChange_Model.setTitle(QCoreApplication.translate("MainWindow", u"Change Transcription Model", None))
     # retranslateUi

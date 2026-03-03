@@ -1,7 +1,7 @@
 import sys
 from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer
-from PySide6.QtGui import QPixmap, QImage, QWindow, QTransform
+from PySide6.QtGui import QKeyEvent, QPixmap, QImage
 import pathlib # to get home
 from captions import Captions
 import PyVisualHelp
@@ -124,9 +124,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     
     def magnify(self):
         self.magnify_util.take_screenshot()
-        magnify_window = MagnifyWin(data_location + "screenshot.png")
+        self.magnify_window = MagnifyWin(data_location + "screenshot.png")
         print("showing full")
         print("show")
+        self.magnify_dialog.destroy()
+        self.magnify_window.showFullScreen()
 
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
@@ -147,10 +149,28 @@ class MagnifyWin(QtWidgets.QMainWindow):
         self.gv = QtWidgets.QGraphicsView()
         self.scene = QtWidgets.QGraphicsScene()
         self.label = QtWidgets.QLabel()
-        self.image = QImage(image)
-        self.label.setPixmap(QPixmap.fromImage(self.image))
-        self.setCentralWidget(self.label)
-        self.show()
+        self.image = QtWidgets.QGraphicsPixmapItem()
+        self.image.setPixmap(QPixmap.fromImage(QImage(image)))
+        self.scene.addItem(self.image)
+        self.gv.setScene(self.scene)
+        self.setCentralWidget(self.gv)
+        self.timer = QTimer()
+        self.timer.setInterval(10)
+        self.timer.timeout.connect(self.move_image)
+        self.timer.start()
+        print("YAY")
+        
+    def move_image(self):
+        print(self.cursor().pos())
+        self.gv.centerOn(self.cursor().pos())
+                
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        self.destroy()
+        self.timer.stop()
+        return super().keyPressEvent(event)
+    
+    def load(self):
+        pass
 
 app = QtWidgets.QApplication(sys.argv)
 
