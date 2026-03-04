@@ -1,7 +1,7 @@
 import sys
 from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer, Qt
-from PySide6.QtGui import QKeyEvent, QPixmap, QImage, QWindow
+from PySide6.QtGui import QKeyEvent, QPixmap, QImage, QIcon
 import pathlib # to get home
 from captions import Captions
 import PyVisualHelp
@@ -17,6 +17,15 @@ data_location = pathlib.Path.home()._str.replace("\\","/") + "/.audiovisualhelp/
 if not os.path.exists(data_location):
     os.makedirs(data_location)
 
+basedir = pathlib.Path(__file__).parent
+
+try:
+    from ctypes import windll
+    app_id='org.huttoisdTSA2026.AudioVisualHelper'
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+except ImportError:
+    pass
+
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # init
     def __init__(self):
@@ -31,6 +40,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.openMagnify.clicked.connect(self.open_magnify_dialog)
         self.threadpool = QThreadPool() # make a threadpool to run workers
         self.__setup_actions__() # setup the actoins
+        self.setWindowTitle("AudioVisualHelper")
+
     
     # If i is not equal to the index selected, deactivate it. Else, activate it.
     def set_model(self, checked, model_index):
@@ -198,8 +209,10 @@ class MagnifyWin(QtWidgets.QMainWindow):
         self.timer.stop()
         self.main_win.open_magnify_dialog()
 
-app = QtWidgets.QApplication(sys.argv)
-
-window = MainWindow()
-window.show()
-app.exec()
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    app.setWindowIcon(QIcon(os.path.join(basedir, 'icon', 'icon.ico')))
+    print(os.path.join(basedir, 'icon', 'icon.ico'))
+    app.exec()
