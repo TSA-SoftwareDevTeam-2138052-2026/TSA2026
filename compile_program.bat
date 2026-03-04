@@ -1,0 +1,1 @@
+pyinstaller --name AudioVisualHelper --windowed .\src\app.py
