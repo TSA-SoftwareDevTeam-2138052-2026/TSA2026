@@ -1,7 +1,7 @@
 import sys
 from PySide6 import QtWidgets
-from PySide6.QtCore import QThreadPool, QTimer
-from PySide6.QtGui import QKeyEvent, QPixmap, QImage
+from PySide6.QtCore import QThreadPool, QTimer, Qt
+from PySide6.QtGui import QKeyEvent, QPixmap, QImage, QWindow
 import pathlib # to get home
 from captions import Captions
 import PyVisualHelp
@@ -115,21 +115,38 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # Destroy the transcribing window and delete the timer.    
     def destroy_transcribing(self):
         self.transcribing.destroy()
+        self.timer.timeout.disconnect(self.destroy_transcribing)
         del self.timer
         
     def open_magnify_dialog(self):
+        print("run")
         self.magnify_dialog = MagnifyDialog()
-        self.magnify_dialog.magnify.clicked.connect(self.magnify)
-        self.magnify_dialog.exec()
+        self.magnify_dialog.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self.magnify_dialog.buttonBox.buttons()[0].pressed.connect(self.magnify_dialog.destroy)
+        self.magnify_dialog.magnify.clicked.connect(self.wait_for_magnify)
+        self.magnify_dialog.show()
+        
+    def wait_for_magnify(self):
+        self.window_open = True
+        self.magnify_dialog.magnify.clicked.disconnect(self.wait_for_magnify)
+        self.magnify_dialog.destroy()
+        self.timer = QTimer()
+        self.timer.setInterval(200)
+        self.timer.timeout.connect(self.magnify)
+        self.timer.setSingleShot(True)
+        self.timer.start()
     
     def magnify(self):
+        del self.magnify_dialog
         self.magnify_util.take_screenshot()
-        self.magnify_window = MagnifyWin(data_location + "screenshot.png")
-        print("showing full")
-        print("show")
-        self.magnify_dialog.destroy()
+        self.magnify_window = MagnifyWin(data_location + "screenshot.png", self)
         self.magnify_window.showFullScreen()
-
+    
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        self.magnify_window.destroy()
+        del self.magnify_window
+        return super().keyPressEvent(event)
+        
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
@@ -137,40 +154,49 @@ class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
         self.setupUi(self)
 
 # The magnifier window.
-class MagnifyDialog(MagnifierUI.Ui_Dialog, QtWidgets.QDialog):
+class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-class MagnifyWin(QtWidgets.QMainWindow):
+class ImageDialog(QtWidgets.QGraphicsView):
     def __init__(self, image):
-        print("Init win")
         super().__init__()
-        self.gv = QtWidgets.QGraphicsView()
-        self.scene = QtWidgets.QGraphicsScene()
-        self.label = QtWidgets.QLabel()
+        self.graph_scene = QtWidgets.QGraphicsScene()
         self.image = QtWidgets.QGraphicsPixmapItem()
         self.image.setPixmap(QPixmap.fromImage(QImage(image)))
-        self.scene.addItem(self.image)
-        self.gv.setScene(self.scene)
+        self.graph_scene.addItem(self.image)
+        self.setScene(self.graph_scene)
+
+class MagnifyWin(QtWidgets.QMainWindow):
+    def __init__(self, image, window_instance: MainWindow):
+        print("Init win")
+        super().__init__()
+        self.gv = ImageDialog(image)
         self.setCentralWidget(self.gv)
         self.timer = QTimer()
-        self.timer.setInterval(10)
-        self.timer.timeout.connect(self.move_image)
+        self.timer.setInterval(25)
+        self.timer.timeout.connect(self.pre_load)
         self.timer.start()
-        print("YAY")
+        self.gv.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.gv.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.gv.scale(1.5,1.5)
+        self.setStyleSheet("border: none;")
+        self.gv.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.gv.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.main_win = window_instance
         
-    def move_image(self):
-        print(self.cursor().pos())
-        self.gv.centerOn(self.cursor().pos())
-                
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.destroy()
-        self.timer.stop()
-        return super().keyPressEvent(event)
+    def pre_load(self):
+        self.gv.fitInView(self.gv.image, Qt.AspectRatioMode.KeepAspectRatio)
+        self.gv.scale(1.5,1.5)
     
     def load(self):
         pass
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        self.destroy()
+        self.timer.stop()
+        self.main_win.open_magnify_dialog()
 
 app = QtWidgets.QApplication(sys.argv)
 
