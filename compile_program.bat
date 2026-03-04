@@ -1,1 +1,1 @@
-pyinstaller --name AudioVisualHelper --icon=icon.ico --add-data="icon.ico;." --windowed .\src\app.py
+pyinstaller --noconfirm --name AudioVisualHelper --icon=.\icon\icon.ico --add-data=".\icon\icon.ico;icon" --windowed app.py

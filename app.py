@@ -20,9 +20,9 @@ if not os.path.exists(data_location):
 basedir = pathlib.Path(__file__).parent
 
 try:
-    from ctypes import windll
+    import ctypes
     app_id='org.huttoisdTSA2026.AudioVisualHelper'
-    windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
 except ImportError:
     pass
 
