@@ -1,5 +1,5 @@
 import whisper_timestamped as whisper
-
+import sys, os
 class PyAudioTranscript:
     # file is as so:
     # id:
@@ -27,7 +27,11 @@ class PyAudioTranscript:
             print("GPU failed. Trying CPU...")
             recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
         try:
+            og_out = sys.stdout
+            f = open(os.devnull, 'w')
+            sys.stdout = f
             transcription = whisper.transcribe(recognizer, audio)
+            sys.stdout = og_out
             return cls.convert_timestamp_to_temp(transcription)
         except Exception as e:
             return str(e)
