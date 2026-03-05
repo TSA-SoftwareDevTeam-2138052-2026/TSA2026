@@ -12,7 +12,7 @@ import MagnifierUI
 from Worker import Worker
 import os
 
-data_location = pathlib.Path.home()._str.replace("\\","/") + "/.audiovisualhelp/"
+data_location = pathlib.Path.home().as_posix() + "/.audiovisualhelp/"
 
 if not os.path.exists(data_location):
     os.makedirs(data_location)
@@ -87,7 +87,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             from PyAudioTranscript import PyAudioTranscript
             self.transcribe_util = PyAudioTranscript()
         worker = Worker(self.caption_file, file_name, model_name)
-        print("Worker")
         self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
         worker.signals.finished.connect(self.show_done_transcript)
         self.threadpool.start(worker)
@@ -112,7 +111,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     
     # Show the done dialog then close after 2 seconds.
     def show_done_transcript(self, s):
-        print("DONE!", s)
         self.transcribing.transcription_text.setText("Done!")
         self.timer = QTimer()
         self.timer.setSingleShot(True)
@@ -130,7 +128,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         del self.timer
         
     def open_magnify_dialog(self):
-        print("run")
         self.magnify_dialog = MagnifyDialog()
         self.magnify_dialog.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.magnify_dialog.buttonBox.buttons()[0].pressed.connect(self.magnify_dialog.destroy)
@@ -181,7 +178,6 @@ class ImageDialog(QtWidgets.QGraphicsView):
 
 class MagnifyWin(QtWidgets.QMainWindow):
     def __init__(self, image, window_instance: MainWindow):
-        print("Init win")
         super().__init__()
         self.gv = ImageDialog(image)
         self.setCentralWidget(self.gv)
@@ -200,9 +196,7 @@ class MagnifyWin(QtWidgets.QMainWindow):
     def pre_load(self):
         self.gv.fitInView(self.gv.image, Qt.AspectRatioMode.KeepAspectRatio)
         self.gv.scale(1.5,1.5)
-    
-    def load(self):
-        pass
+
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self.destroy()

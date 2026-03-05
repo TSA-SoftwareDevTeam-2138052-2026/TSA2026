@@ -3,7 +3,6 @@ import pathlib # to get home
 import os # to check os name
 import subprocess # to run ffmpeg to check
 import pathlib # to manage paths
-import ffmpeg
 
 class ffmpeg_manager:
     def __init__(self):
@@ -26,12 +25,4 @@ class ffmpeg_manager:
                     print("ABORTING...")
         else:
             print("ERROR: Unable to Find FFMPEG. This isn't a Windows system so you will have to install it yourself.")
-    
-    @classmethod
-    def remove_video(cls, video_path: str) -> str:
-        video_path = video_path.strip("\"\'")
-        video_path_pathlib = pathlib.Path.resolve(pathlib.Path(video_path))
-        output = video_path_pathlib.parent._str + "/" + video_path_pathlib.name.split(".")[0] + ".wav"
-        video = ffmpeg.input(video_path_pathlib).output(output).overwrite_output().run()
-        return output
     
