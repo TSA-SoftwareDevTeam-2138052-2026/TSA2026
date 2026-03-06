@@ -1,6 +1,5 @@
 import cv2
 import os
-import pathlib
 import pyautogui
 import pygetwindow as gw
 from PIL import Image
