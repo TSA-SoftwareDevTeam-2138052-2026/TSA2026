@@ -174,6 +174,7 @@ class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
         super().__init__()
         self.setupUi(self)
 
+# The credits window.
 class CreditsDialog(CreditsWindow.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
@@ -184,6 +185,7 @@ class CreditsDialog(CreditsWindow.Ui_Dialog, QtWidgets.QDialog):
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
 
+# The actual image display for zooming
 class ImageDialog(QtWidgets.QGraphicsView):
     def __init__(self, image):
         super().__init__()
@@ -193,6 +195,7 @@ class ImageDialog(QtWidgets.QGraphicsView):
         self.graph_scene.addItem(self.image)
         self.setScene(self.graph_scene)
 
+# The magnifier window that holds ImageDialog
 class MagnifyWin(QtWidgets.QMainWindow):
     def __init__(self, image, window_instance: MainWindow):
         super().__init__()
