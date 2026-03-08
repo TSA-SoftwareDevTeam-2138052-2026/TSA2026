@@ -6,7 +6,7 @@ The license is avaliable under LICENSE in the main directory.
 
 ## Credits
 
-We, by the licenses of the tools used, have to credit the people who made them and supply the licenses here.
+We, in order to comply with the licenses of the tools used, have to credit the people who made them and supply the licenses here.
 
 ### Tools Used
 
