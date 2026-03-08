@@ -10,6 +10,7 @@ import MainUI
 import transcribing_file
 import MagnifierUI
 from Worker import Worker
+import CreditsWindow
 import os
 
 data_location = pathlib.Path.home().as_posix() + "/.audiovisualhelp/"
@@ -64,6 +65,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.action_set_medium.triggered.connect(lambda triggered: self.set_model(triggered, 3))
         self.action_set_large.triggered.connect(lambda triggered: self.set_model(triggered, 4))
         self.action_set_turbo.triggered.connect(lambda triggered: self.set_model(triggered, 5))
+        self.actionCredits.triggered.connect(self.open_credits)
+    
+    def open_credits(self):
+        self.credits = CreditsDialog()
+        self.credits.exec()
         
     # transcribe the file
     def transcribe_item(self):
@@ -76,7 +82,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.transcribing = TranscribingDialog()
         worker = Worker(self.check_for_transcribe, file_name, self.model)
         # Show a dialog to start it
-        self.transcribing.transcription_text.setText(f"Importing whisper...")
+        self.transcribing.transcription_text.setText("Importing whisper...")
         self.threadpool.start(worker)
         self.transcribing.exec()
 
@@ -104,8 +110,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         with open(".".join(file_split) + ".vtt", "w") as file:
             try:
                 file.write(Captions.convert_temp_to_captions(temp, "vtt"))
-            except:
+            except Exception as e:
                 print("ERROR")
+                print(e)
             file.close()
         return True
     
@@ -154,7 +161,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.magnify_window.destroy()
         del self.magnify_window
         return super().keyPressEvent(event)
-        
+
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
@@ -166,6 +173,16 @@ class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+class CreditsDialog(CreditsWindow.Ui_Dialog, QtWidgets.QDialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        with open("licenses.md", "r", encoding='utf-8') as file:
+            self.label.setText(file.read())
+            file.close()
+        self.label.setWordWrap(True)
+        self.scrollArea.setWidgetResizable(True)
 
 class ImageDialog(QtWidgets.QGraphicsView):
     def __init__(self, image):

@@ -115,6 +115,7 @@
      <addaction name="action_set_turbo"/>
     </widget>
     <addaction name="menuChange_Model"/>
+    <addaction name="actionCredits"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
@@ -167,6 +168,11 @@
    </property>
    <property name="text">
     <string>turbo (large but faster)</string>
+   </property>
+  </action>
+  <action name="actionCredits">
+   <property name="text">
+    <string>Credits...</string>
    </property>
   </action>
  </widget>
