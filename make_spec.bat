@@ -1,0 +1,1 @@
+pyi-makespec --name AudioVisualHelper --icon=./icon/icon.ico --add-data="./icon/icon.ico;icon" --add-data="licenses.md;." --windowed ./src/app.py

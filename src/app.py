@@ -10,8 +10,10 @@ import MainUI
 import transcribing_file
 import MagnifierUI
 from Worker import Worker
-import CreditsWindow
+import LicensesWindow
 import os
+
+is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 data_location = pathlib.Path.home().as_posix() + "/.audiovisualhelp/"
 
@@ -175,13 +177,18 @@ class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
         self.setupUi(self)
 
 # The credits window.
-class CreditsDialog(CreditsWindow.Ui_Dialog, QtWidgets.QDialog):
+class CreditsDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        with open("licenses.md", "r", encoding='utf-8') as file:
-            self.label.setText(file.read())
-            file.close()
+        if is_pyinstaller:
+            with open(basedir.as_posix() + "./licenses.md", "r", encoding='utf-8') as file:
+                self.label.setText(file.read())
+                file.close()
+        else:
+            with open(basedir.parent.as_posix() + "/licenses.md", 'r', encoding='utf-8') as file:
+                self.label.setText(file.read())
+                file.close()
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
 
@@ -227,6 +234,8 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    app.setWindowIcon(QIcon(os.path.join(basedir, 'icon', 'icon.ico')))
-    print(os.path.join(basedir, 'icon', 'icon.ico'))
+    if is_pyinstaller:
+        app.setWindowIcon(QIcon(os.path.join(basedir, 'icon', 'icon.ico')))
+    else:
+        app.setWindowIcon(QIcon(os.path.join(basedir.parent, 'icon', 'icon.ico')))
     app.exec()

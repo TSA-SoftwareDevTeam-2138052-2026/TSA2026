@@ -1,1 +1,1 @@
-pyinstaller --noconfirm --name AudioVisualHelper --icon=.\icon\icon.ico --add-data=".\icon\icon.ico;icon" --windowed app.py
+pyinstaller --noconfirm AudioVisualHelper.spec
