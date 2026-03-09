@@ -1,4 +1,11 @@
-import sys
+import sys, os
+
+# Needed for libraries to function
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w")
+
 from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer, Qt
 from PySide6.QtGui import QKeyEvent, QPixmap, QImage, QIcon
@@ -11,7 +18,6 @@ import transcribing_file
 import MagnifierUI
 from Worker import Worker
 import LicensesWindow
-import os
 
 is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
@@ -162,8 +168,9 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.magnify_window.showFullScreen()
     
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.magnify_window.destroy()
-        del self.magnify_window
+        if getattr(self, "magnify_window", False):
+            self.magnify_window.destroy()
+            del self.magnify_window
         return super().keyPressEvent(event)
 
 # The transcribing dialog. Opens from the QT Designer file.
