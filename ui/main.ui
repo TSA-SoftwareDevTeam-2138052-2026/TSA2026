@@ -115,9 +115,17 @@
      <addaction name="action_set_turbo"/>
     </widget>
     <addaction name="menuChange_Model"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionShortcuts"/>
+    <addaction name="actionLicenses"/>
     <addaction name="actionCredits"/>
    </widget>
    <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="action_set_tiny">
    <property name="checkable">
@@ -173,6 +181,16 @@
   <action name="actionCredits">
    <property name="text">
     <string>Credits...</string>
+   </property>
+  </action>
+  <action name="actionLicenses">
+   <property name="text">
+    <string>Licenses...</string>
+   </property>
+  </action>
+  <action name="actionShortcuts">
+   <property name="text">
+    <string>Shortcuts...</string>
    </property>
   </action>
  </widget>

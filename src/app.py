@@ -67,10 +67,12 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.action_set_medium.triggered.connect(lambda triggered: self.set_model(triggered, 3))
         self.action_set_large.triggered.connect(lambda triggered: self.set_model(triggered, 4))
         self.action_set_turbo.triggered.connect(lambda triggered: self.set_model(triggered, 5))
-        self.actionCredits.triggered.connect(self.open_credits)
+        
+        # Set the Help menu actions
+        self.actionLicenses.triggered.connect(self.open_licenses)
     
-    def open_credits(self):
-        self.credits = CreditsDialog()
+    def open_licenses(self):
+        self.credits = LicensesDialog()
         self.credits.exec()
         
     # transcribe the file
@@ -169,15 +171,17 @@ class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle("Transcription")
 
 # The magnifier window.
 class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle("Magnification")
 
-# The credits window.
-class CreditsDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
+# The licenses window.
+class LicensesDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -191,6 +195,8 @@ class CreditsDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
                 file.close()
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
+        self.label.setOpenExternalLinks(True)
+        self.setWindowTitle("Licenses")
 
 # The actual image display for zooming
 class ImageDialog(QtWidgets.QGraphicsView):
