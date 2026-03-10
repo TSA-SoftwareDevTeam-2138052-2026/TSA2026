@@ -1,4 +1,5 @@
 import whisper_timestamped as whisper
+import pathlib
 class PyAudioTranscript:
     # file is as so:
     # id:
@@ -23,12 +24,11 @@ class PyAudioTranscript:
         try:
             recognizer = whisper.load_model(model, device="gpu") # Try faster GPU processing
         except:
-            print("GPU failed. Trying CPU...")
             try:
                 recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
             except Exception as e:
                 print(e)
-                with open("C:/Users/Zachary.Smith/error.txt", "w") as file:
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
                     file.write(e.__str__())
                     file.close()
                 exit()
@@ -38,7 +38,7 @@ class PyAudioTranscript:
                 return cls.convert_timestamp_to_temp(transcription)
             except Exception as e:
                 print(e)
-                with open("C:/Users/Zachary.Smith/error.txt", "w") as file:
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
                     file.write(e.__str__())
                     file.close()
                 return "E"

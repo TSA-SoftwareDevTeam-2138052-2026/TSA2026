@@ -15,14 +15,17 @@ class ffmpeg_manager:
         if cls.ffmpeg_path != "native":
             try:
                 subprocess.run(['ffmpeg', '-version'],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-                print("FOUND!")
             except FileNotFoundError:
-                print("FFMPEG not found. Installing via winget...")
                 try:
                     subprocess.run(['winget', 'install', 'ffmpeg', '--accept-source-agreements', '--accept-package-agreements'])
                 except FileNotFoundError:
                     print("ERROR. CANNOT FIND WINGET.")
                     print("ABORTING...")
         else:
-            print("ERROR: Unable to Find FFMPEG. This isn't a Windows system so you will have to install it yourself.")
+            raise(FFmpegNotFoundException("ERROR: Unable to Find FFMPEG. This isn't a Windows system so you will have to install it yourself."))
+
+
+class FFmpegNotFoundException(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
     

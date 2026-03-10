@@ -115,6 +115,8 @@
      <addaction name="action_set_turbo"/>
     </widget>
     <addaction name="menuChange_Model"/>
+    <addaction name="actionReset_Preferences"/>
+    <addaction name="actionClear_Whisper_Model_Cache"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -191,6 +193,16 @@
   <action name="actionShortcuts">
    <property name="text">
     <string>Shortcuts...</string>
+   </property>
+  </action>
+  <action name="actionReset_Preferences">
+   <property name="text">
+    <string>Reset Preferences...</string>
+   </property>
+  </action>
+  <action name="actionClear_Whisper_Model_Cache">
+   <property name="text">
+    <string>Clear Whisper Model Cache</string>
    </property>
   </action>
  </widget>
