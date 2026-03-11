@@ -36,7 +36,7 @@ class PyAudioTranscript:
                 exit()
         try:
             try:
-                transcription = whisper.transcribe(recognizer, audio)
+                transcription = whisper.transcribe(recognizer, audio, beam_size=5, best_of=5, temperature=(0.0,0.2,0.4,0.6,0.8,1.0))
                 pprint.pprint(transcription)
                 return cls.convert_timestamp_to_temp(transcription)
             except Exception as e:
