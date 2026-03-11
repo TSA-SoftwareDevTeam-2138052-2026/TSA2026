@@ -166,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # Make a file dialog to select the file
         file_dialog = QtWidgets.QFileDialog()
         file_dialog.setFileMode(file_dialog.FileMode.ExistingFile)
-        file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home()._str + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
+        file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
         
         # Show a dialog to start it
         self.transcribing = TranscribingDialog()

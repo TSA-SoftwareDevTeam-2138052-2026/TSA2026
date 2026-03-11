@@ -8,7 +8,7 @@ class ffmpeg_manager:
     def __init__(self):
         pass
     
-    ffmpeg_path = pathlib.Path.home()._str + "/ffmpeg" if os.name == "nt" else "native"
+    ffmpeg_path = pathlib.Path.home().as_posix() + "/ffmpeg" if os.name == "nt" else "native"
     
     @classmethod
     def download_ffmpeg(cls) -> None:
