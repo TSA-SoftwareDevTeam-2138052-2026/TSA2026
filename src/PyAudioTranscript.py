@@ -1,3 +1,5 @@
+import pprint
+
 import whisper_timestamped as whisper
 import pathlib
 class PyAudioTranscript:
@@ -35,6 +37,7 @@ class PyAudioTranscript:
         try:
             try:
                 transcription = whisper.transcribe(recognizer, audio)
+                pprint.pprint(transcription)
                 return cls.convert_timestamp_to_temp(transcription)
             except Exception as e:
                 print(e)
