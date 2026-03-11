@@ -198,7 +198,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # Turn the file into a transcript
         temp: str = self.transcribe_util.turn_into_transcript(file_name, model_name)
         
-        print(temp)
         # get the base name
         file_split = file_name.split(".")
         file_split.pop(-1)
