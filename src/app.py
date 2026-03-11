@@ -206,7 +206,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         except:
             import time
             self.time_mod = time
-        self.time_mod.sleep(1)
+        self.time_mod.sleep(5)
 
     def caption_file(self, file_name, model_name) -> bool:
         ffmpeg_manager.download_ffmpeg()
