@@ -22,6 +22,7 @@ import MainUI
 from Worker import Worker
 import SecondaryWindows
 import DataTools
+import HelpWindows
 
 is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
@@ -60,7 +61,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.contrast.clicked.connect(self.screenshot_util.contrast_screenshot) # click contrast button = screenshot with contrast
         self.openMagnify.clicked.connect(self.open_magnify_dialog) # click magnify button = magnify dialog to magnify for screen
         self.threadpool = QThreadPool() # make a threadpool to run workers
-        self.datatools = DataTools.DataTools(basedir, data_location, self)
+        self.datatools = DataTools.DataTools(basedir, data_location, self, is_pyinstaller)
+        self.help_win = HelpWindows.HelpWin()
         self.__setup_actions__() # setup the actions
         self.setWindowTitle("AudioVisual Helper")
         try:
@@ -101,28 +103,13 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.action_set_turbo.triggered.connect(lambda triggered: self.set_model(triggered, 5))
         
         # Set the Help menu actions
-        self.actionLicenses.triggered.connect(self.open_licenses)
-        self.actionCredits.triggered.connect(self.open_credits)
-        self.actionShortcuts.triggered.connect(self.open_help)
+        self.actionLicenses.triggered.connect(self.help_win.open_licenses)
+        self.actionCredits.triggered.connect(self.help_win.open_credits)
+        self.actionShortcuts.triggered.connect(self.help_win.open_help)
         
         # Set other option actions
         self.actionReset_Preferences.triggered.connect(self.reset_data_conf)
         self.actionClear_Whisper_Model_Cache.triggered.connect(self.datatools.clear_model_cache)
-    
-    def open_licenses(self) -> None:
-        self.licenses = SecondaryWindows.TextReadDialog("./licenses.md")
-        self.licenses.setWindowTitle("Licenses")
-        self.licenses.exec()
-    
-    def open_credits(self) -> None:
-        self.credits = SecondaryWindows.TextReadDialog("./credits.md")
-        self.credits.setWindowTitle("Credits")
-        self.credits.exec()
-    
-    def open_help(self) -> None:
-        self.credits = SecondaryWindows.TextReadDialog("./help.md")
-        self.credits.setWindowTitle("Help")
-        self.credits.exec()
         
     # transcribe the file
     def transcribe_item(self) -> None:

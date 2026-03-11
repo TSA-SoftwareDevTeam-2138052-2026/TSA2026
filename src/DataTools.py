@@ -5,10 +5,11 @@ import pickle
 import sys
 
 class DataTools:
-    def __init__(self, basedir, datadir, mainwindow: "main.MainWindow") -> None:
+    def __init__(self, basedir, datadir, mainwindow: "main.MainWindow", is_pyinstaller:bool) -> None:
         self.basedir = basedir
         self.datadir = datadir
         self.main = mainwindow
+        self.is_pyinstaller = is_pyinstaller
     
     # dictionary has model key with index within a dictionary
     def save_data(self) -> None:
@@ -64,5 +65,24 @@ class DataTools:
         except:
             return False
     
-    def load_file_from_self(self, filename: str):
-        pathlib.Path
+    def load_file_from_self(self, filename: str, is_binary: bool=False):
+        data = ""
+        if is_binary:
+            if self.is_pyinstaller:
+                with open(self.basedir.as_posix() + filename, "r", encoding='utf-8') as file:
+                    data = file.read()
+                    file.close()
+            else:
+                with open(self.basedir.parent.as_posix() + filename, 'r', encoding='utf-8') as file:
+                    data = file.read()
+                    file.close()
+        else:
+            if self.is_pyinstaller:
+                with open(self.basedir.as_posix() + filename, "r", encoding='utf-8') as file:
+                    data = file.read()
+                    file.close()
+            else:
+                with open(self.basedir.parent.as_posix() + filename, 'r', encoding='utf-8') as file:
+                    data = file.read()
+                    file.close()
+        return data

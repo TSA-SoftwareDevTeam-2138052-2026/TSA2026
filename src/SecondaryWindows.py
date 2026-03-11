@@ -12,6 +12,8 @@ import sys
 import os
 import pathlib
 
+import DataTools
+
 # Needed for libraries to function
 if sys.stdout is None:
     sys.stdout = open(os.devnull, "w")
@@ -22,33 +24,30 @@ is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 basedir = pathlib.Path(__file__).parent
 
+class DataToolsSuper:
+    def __init__(self):
+        self.datatools = DataTools.DataTools(main.basedir, main.data_location, main.MainWindow(), main.is_pyinstaller)
+
 # The transcribing dialog. Opens from the QT Designer file.
-class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
+class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog, DataToolsSuper):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Transcription")
 
 # The magnifier window.
-class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
+class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow, DataToolsSuper):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Magnification")
 
 # The licenses window.
-class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
+class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog, DataToolsSuper):
     def __init__(self, file_to_read) -> None:
         super().__init__()
         self.setupUi(self)
-        if is_pyinstaller:
-            with open(basedir.as_posix() + file_to_read, "r", encoding='utf-8') as file:
-                self.label.setText(file.read())
-                file.close()
-        else:
-            with open(basedir.parent.as_posix() + file_to_read, 'r', encoding='utf-8') as file:
-                self.label.setText(file.read())
-                file.close()
+        self.label.setText(self.datatools.load_file_from_self(file_to_read, False))
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
         self.label.setOpenExternalLinks(True)
