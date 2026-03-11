@@ -10,22 +10,27 @@ The program's code is in `main`, the branch that (hopefully) you should be on. T
 
 This program has 2 functions:
 
-1. Transcript Making from Video (via Whisper)
-2. Black and White Screenshot (via opencv)
+1. Captions from Video (via Whisper)
+2. Contrast-enhancing Screenshot (via opencv)
+3. Magnification (via GraphicsView)
 
-For video transcripts, the output will be a txt file in the same directory with the same name as the video but with a "_transcript" added in front of it. Whisper speech to text is done locally on your device with the 'base' model.
+Captions will automatically be saved with the same filename as the video as a VTT format. This should ensure auto-discovery by most modern media players (Windows Media Player, VLC, etc.)
 
-For screenshots, the image is (hopefully) deleted right after the image is closed. Program crashes may not delete the file, so you can delete it manually in the program directory.
+For screenshots and magnification, the image is (hopefully) deleted right after the image is closed. Program crashes may not delete the file, so you can delete it manually in the program's data directory located at:
+
+`$HOME/.audiovisualhelp/screenshot.png` on Linux-based systems (expands to `/home/USER/.audiovisualhelp/screenshot.png`)
+
+or
+
+`%USERPROFILE%\.audiovisualhelp\screenshot.png` on Windows-based systems (expands to `C:\Users\USER\.audiovisualhelp\screenshot.png`)
 
 ## Usage
 
 Make a virtual environment with `python -m venv .venv` and activate it (`./venv/Scripts/Activate.ps1` on Powershell, `source ./venv/bin/activate` for UNIX based systems).
 
-Install the required packages with `pip install -r requirements.txt`. Run the program with `python ./src/main.py` and it should install ffmpeg for you.
+Install the required packages with `pip install -r requirements.txt`. Run the program with `python ./src/app.py` and it should open up the main window.
 
-Then, you can just see the commands in the terminal, but we will put it here for your reference:
+Some convinience shortcuts for your pleasure:
 
 * Control + Shift + Enter: Make a transcript.
 * Control + \\: Show a black and white screenshot.
-
-###### End of README

@@ -1,10 +1,12 @@
 # This program is licensed under the AGPL
 
-This means the source code is avaliable for viewing at [https://github.com/Hutto-ISD-SD-Team-TSA-2026/TSA2026](https://github.com/Hutto-ISD-SD-Team-TSA-2026/TSA2026).
+This means the source code is avaliable for viewing at <https://github.com/TODO/TSA2026>.
 
 The license is avaliable under LICENSE in the main directory.
 
 ## Credits
+
+Made by TSA Team ID [TODO: ID]
 
 We, in order to comply with the licenses of the tools used, have to credit the people who made them and supply the licenses here.
 

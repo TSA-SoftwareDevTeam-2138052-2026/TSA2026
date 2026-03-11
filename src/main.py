@@ -19,11 +19,9 @@ from ffmpeg_manager import ffmpeg_manager
 
 # Window Imports
 import MainUI
-import transcribing_file
-import MagnifierUI
 from Worker import Worker
-import LicensesWindow
-import ResetPrefDialog
+import SecondaryWindows
+import DataTools
 
 is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
@@ -42,6 +40,8 @@ if os.name == "nt":
     except ImportError:
         pass
 
+print("WE PASSED")
+
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # init
     def __init__(self) -> None:
@@ -49,6 +49,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # initialize the libraries
         self.screenshot_util = PyVisualHelp.Screenshot(data_location)
         keyboard.add_hotkey("ctrl+\\", self.screenshot_util.contrast_screenshot, args=()) #type: ignore
+        keyboard.add_hotkey("ctrl+shift+enter", self.transcribe_item)
         self.magnify_util = PyVisualHelp.Magnify(data_location)
         self.setupUi(self)
         # set the models
@@ -59,45 +60,13 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.contrast.clicked.connect(self.screenshot_util.contrast_screenshot) # click contrast button = screenshot with contrast
         self.openMagnify.clicked.connect(self.open_magnify_dialog) # click magnify button = magnify dialog to magnify for screen
         self.threadpool = QThreadPool() # make a threadpool to run workers
+        self.datatools = DataTools.DataTools(basedir, data_location, self)
         self.__setup_actions__() # setup the actions
         self.setWindowTitle("AudioVisual Helper")
         try:
-            self.load_data()
+            self.datatools.load_data()
         except FileNotFoundError:
-            self.save_data()
-
-    # dictionary has model key with index within a dictionary
-    def save_data(self) -> None:
-        self.save_dict = { 
-            "model": {
-                "index": self.model_index
-            }
-        }
-        with open(data_location + "/preferences.pkl", "wb") as file:
-            pickle.dump(self.save_dict, file)
-            file.close()
-
-    # self explanatory, loads data
-    def load_data(self):
-        self.save_dict = {}
-        with open(data_location + "/preferences.pkl", "rb") as file:
-            self.save_dict = pickle.load(file)
-        
-        # All the data to load, in dictionary sequential order.
-        self.set_model(True, self.save_dict["model"]["index"])
-    
-    # internal delete directory function
-    def __del_dir__(self, directory: str):
-        for dirpath, dirnames, filenames in os.walk(directory):
-            for dirname in dirnames:
-                self.__del_dir__(os.path.join(dirpath, dirname))
-            for name in filenames:
-                os.remove(os.path.join(dirpath, name))
-        os.removedirs(directory)
-        
-    # clears the model cache to save storage space
-    def clear_model_cache(self):
-        self.__del_dir__(pathlib.Path.home().as_posix() + "/.cache/whisper/")
+            self.datatools.save_data()
             
         
     # If i is not equal to the index selected, deactivate it. Else, activate it.
@@ -109,35 +78,15 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
                 self.model = self.model_map[i]
             else:
                 self.model_button_list[i].setChecked(False)
-        self.save_data()
+        self.datatools.save_data()
     
     # confirm the user wants to reset data; don't wanna accidentally delete anything
     def reset_data_conf(self):
-        self.confirm_dialog = ResetPref()
-        self.confirm_dialog.buttonBox.accepted.connect(self.reset_data)
+        self.confirm_dialog = SecondaryWindows.ResetPref()
+        self.confirm_dialog.buttonBox.accepted.connect(self.datatools.reset_data)
         self.confirm_dialog.buttonBox.rejected.connect(self.confirm_dialog.destroy)
         self.confirm_dialog.exec()
         
-    # messy but works
-    def reset_data(self):
-        try:
-            os.remove(data_location + "/preferences.pkl")
-            self.timer = QTimer()
-            self.timer.setInterval(5000)
-            self.timer.timeout.connect(sys.exit)
-            self.reset_dialog = QtWidgets.QDialog()
-            self.reset_label = QtWidgets.QLabel()
-            self.reset_label.setText("Data deleted. App will close in 5 seconds.")
-            layout = QtWidgets.QVBoxLayout()
-            layout.addWidget(self.reset_label)
-            self.reset_dialog.setLayout(layout)
-            self.confirm_dialog.buttonBox.setEnabled(False)
-            self.timer.setSingleShot(True)
-            self.reset_dialog.setWindowTitle("Reset Preferences")
-            self.timer.start()
-            self.reset_dialog.exec()
-        except:
-            return False
     # setup the actions
     def __setup_actions__(self) -> None:
         self.model_button_list = [self.action_set_tiny, self.action_set_base, self.action_set_small, self.action_set_medium, self.action_set_large, self.action_set_turbo] # map the actions to call them from i
@@ -153,13 +102,26 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         
         # Set the Help menu actions
         self.actionLicenses.triggered.connect(self.open_licenses)
+        self.actionCredits.triggered.connect(self.open_credits)
+        self.actionShortcuts.triggered.connect(self.open_help)
         
         # Set other option actions
         self.actionReset_Preferences.triggered.connect(self.reset_data_conf)
-        self.actionClear_Whisper_Model_Cache.triggered.connect(self.clear_model_cache)
+        self.actionClear_Whisper_Model_Cache.triggered.connect(self.datatools.clear_model_cache)
     
     def open_licenses(self) -> None:
-        self.credits = LicensesDialog()
+        self.licenses = SecondaryWindows.TextReadDialog("./licenses.md")
+        self.licenses.setWindowTitle("Licenses")
+        self.licenses.exec()
+    
+    def open_credits(self) -> None:
+        self.credits = SecondaryWindows.TextReadDialog("./credits.md")
+        self.credits.setWindowTitle("Credits")
+        self.credits.exec()
+    
+    def open_help(self) -> None:
+        self.credits = SecondaryWindows.TextReadDialog("./help.md")
+        self.credits.setWindowTitle("Help")
         self.credits.exec()
         
     # transcribe the file
@@ -175,7 +137,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
 
         
         # Show a dialog to start it
-        self.transcribing = TranscribingDialog()
+        self.transcribing = SecondaryWindows.TranscribingDialog()
         worker = Worker(self.check_for_transcribe, file_name, self.model)
         
         # Show a dialog to start it
@@ -249,7 +211,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             pass
         
     def open_magnify_dialog(self) -> None:
-        self.magnify_dialog = MagnifyDialog()
+        self.magnify_dialog = SecondaryWindows.MagnifyDialog()
         self.magnify_dialog.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
         self.magnify_dialog.buttonBox.buttons()[0].pressed.connect(self.magnify_dialog.destroy)
         self.magnify_dialog.magnify.clicked.connect(self.wait_for_magnify)
@@ -268,7 +230,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     def magnify(self) -> None:
         del self.magnify_dialog
         self.magnify_util.take_screenshot()
-        self.magnify_window = MagnifyWin(data_location + "screenshot.png", self)
+        self.magnify_window = SecondaryWindows.MagnifyWin(data_location + "screenshot.png", self)
         self.magnify_window.showFullScreen()
     
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -276,82 +238,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             self.magnify_window.destroy()
             del self.magnify_window
         return super().keyPressEvent(event)
-
-# The transcribing dialog. Opens from the QT Designer file.
-class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setupUi(self)
-        self.setWindowTitle("Transcription")
-
-# The magnifier window.
-class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setupUi(self)
-        self.setWindowTitle("Magnification")
-
-# The licenses window.
-class LicensesDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setupUi(self)
-        if is_pyinstaller:
-            with open(basedir.as_posix() + "./licenses.md", "r", encoding='utf-8') as file:
-                self.label.setText(file.read())
-                file.close()
-        else:
-            with open(basedir.parent.as_posix() + "/licenses.md", 'r', encoding='utf-8') as file:
-                self.label.setText(file.read())
-                file.close()
-        self.label.setWordWrap(True)
-        self.scrollArea.setWidgetResizable(True)
-        self.label.setOpenExternalLinks(True)
-        self.setWindowTitle("Licenses")
-
-class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog):
-    def __init__(self) -> None:
-        super().__init__()
-        self.setupUi(self)
-        self.setWindowTitle("Reset Preferences")
-
-# The actual image display for zooming
-class ImageDialog(QtWidgets.QGraphicsView):
-    def __init__(self, image) -> None:
-        super().__init__()
-        self.graph_scene = QtWidgets.QGraphicsScene()
-        self.image = QtWidgets.QGraphicsPixmapItem()
-        self.image.setPixmap(QPixmap.fromImage(QImage(image)))
-        self.graph_scene.addItem(self.image)
-        self.setScene(self.graph_scene)
-
-# The magnifier window that holds ImageDialog
-class MagnifyWin(QtWidgets.QMainWindow):
-    def __init__(self, image, window_instance: MainWindow) -> None:
-        super().__init__()
-        self.gv = ImageDialog(image)
-        self.setCentralWidget(self.gv)
-        self.timer = QTimer()
-        self.timer.setInterval(25)
-        self.timer.timeout.connect(self.pre_load)
-        self.timer.start()
-        self.gv.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
-        self.gv.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
-        self.gv.scale(1.5,1.5)
-        self.setStyleSheet("border: none;")
-        self.gv.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.gv.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.main_win = window_instance
-        
-    def pre_load(self) -> None:
-        self.gv.fitInView(self.gv.image, Qt.AspectRatioMode.KeepAspectRatio)
-        self.gv.scale(1.5,1.5)
-
-
-    def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.destroy()
-        self.timer.stop()
-        self.main_win.open_magnify_dialog()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
