@@ -24,26 +24,27 @@ is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 basedir = pathlib.Path(__file__).parent
 
-class DataToolsSuper:
+class WindowSuper:
     def __init__(self):
         self.datatools = DataTools.DataTools(main.basedir, main.data_location, main.MainWindow(), main.is_pyinstaller)
+        self.main_win = main.MainWindow()
 
 # The transcribing dialog. Opens from the QT Designer file.
-class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog, DataToolsSuper):
+class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog, WindowSuper):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Transcription")
 
 # The magnifier window.
-class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow, DataToolsSuper):
+class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow, WindowSuper):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Magnification")
 
 # The licenses window.
-class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog, DataToolsSuper):
+class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog, WindowSuper):
     def __init__(self, file_to_read) -> None:
         super().__init__()
         self.setupUi(self)
@@ -52,14 +53,14 @@ class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog, DataToolsSuper
         self.scrollArea.setWidgetResizable(True)
         self.label.setOpenExternalLinks(True)
 
-class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog):
+class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog, WindowSuper):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Reset Preferences")
 
 # The actual image display for zooming
-class ImageDialog(QtWidgets.QGraphicsView):
+class ImageDialog(QtWidgets.QGraphicsView, WindowSuper):
     def __init__(self, image) -> None:
         super().__init__()
         self.graph_scene = QtWidgets.QGraphicsScene()
@@ -69,7 +70,7 @@ class ImageDialog(QtWidgets.QGraphicsView):
         self.setScene(self.graph_scene)
 
 # The magnifier window that holds ImageDialog
-class MagnifyWin(QtWidgets.QMainWindow):
+class MagnifyWin(QtWidgets.QMainWindow, WindowSuper):
     def __init__(self, image, window_instance: "main.MainWindow") -> None:
         super().__init__()
         self.gv = ImageDialog(image)
@@ -83,9 +84,7 @@ class MagnifyWin(QtWidgets.QMainWindow):
         self.gv.scale(1.5,1.5)
         self.setStyleSheet("border: none;")
         self.gv.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.gv.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.main_win = window_instance
-        
+        self.gv.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)        
     def pre_load(self) -> None:
         self.gv.fitInView(self.gv.image, Qt.AspectRatioMode.KeepAspectRatio)
         self.gv.scale(1.5,1.5)
