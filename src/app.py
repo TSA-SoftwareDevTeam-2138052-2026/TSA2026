@@ -167,6 +167,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # Make a file dialog to select the file
         file_dialog = QtWidgets.QFileDialog()
         file_dialog.setFileMode(file_dialog.FileMode.ExistingFile)
+        file_name = ""
         if pathlib.Path(pathlib.Path.home().as_posix() + "/Videos").exists():
             file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
         elif pathlib.Path(pathlib.Path.home().as_posix() + "/OneDrive/Videos").exists(): # move to onedrive in case that is preventing videos from working
@@ -176,8 +177,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # Show a dialog to start it
         self.transcribing = TranscribingDialog()
         worker = Worker(self.check_for_transcribe, file_name, self.model)
+        
         # Show a dialog to start it
-        self.transcribing.transcription_text.setText("Importing whisper...")
         self.threadpool.start(worker)
         self.transcribing.exec()
 
@@ -185,14 +186,28 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         try:
             self.transcribe_util
         except AttributeError: #attribute as opposed to name since it is an attribute
+            self.transcribing.transcription_text.setText("Importing whisper...")
             from PyAudioTranscript import PyAudioTranscript
             self.transcribe_util = PyAudioTranscript()
-        worker = Worker(self.caption_file, file_name, model_name)
-        self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
-        worker.signals.finished.connect(self.show_done_transcript)
-        self.threadpool.start(worker)
-
+        if file_name != "":
+            worker = Worker(self.caption_file, file_name, model_name)
+            self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+            worker.signals.finished.connect(self.show_done_transcript)
+            self.threadpool.start(worker)
+        elif file_name == "":
+            worker = Worker(self.wait_for_error)
+            self.transcribing.transcription_text.setText(f"No video selected")
+            worker.signals.finished.connect(self.destroy_transcribing)
+            self.threadpool.start(worker)
     
+    def wait_for_error(self):
+        try:
+            self.time_mod.sleep(0)
+        except:
+            import time
+            self.time_mod = time
+        self.time_mod.sleep(1)
+
     def caption_file(self, file_name, model_name) -> bool:
         ffmpeg_manager.download_ffmpeg()
         # Turn the file into a transcript
@@ -223,12 +238,15 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.transcribing.progressBar.setMinimum(0)
         self.transcribing.progressBar.setValue(1)
         self.timer.start()
-    
+            
     # Destroy the transcribing window and delete the timer.    
     def destroy_transcribing(self) -> None:
         self.transcribing.destroy()
-        self.timer.timeout.disconnect(self.destroy_transcribing)
-        del self.timer
+        try:
+            self.timer.timeout.disconnect(self.destroy_transcribing)
+            del self.timer
+        except:
+            pass
         
     def open_magnify_dialog(self) -> None:
         self.magnify_dialog = MagnifyDialog()
