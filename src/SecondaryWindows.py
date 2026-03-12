@@ -64,10 +64,14 @@ class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
 
 # The magnifier window.
 class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
-    def __init__(self) -> None:
+    def __init__(self, main_win: "main.MainWindow") -> None:
         super().__init__()
         self.setupUi(self)
+        self.main_win = main_win
         self.setWindowTitle("Magnification")
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
+        self.buttonBox.buttons()[0].pressed.connect(self.destroy)
+        self.magnify.clicked.connect(self.main_win.wait_for_magnify)
 
 # The licenses window.
 class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
@@ -99,6 +103,7 @@ class ImageDialog(QtWidgets.QGraphicsView):
 class MagnifyWin(QtWidgets.QMainWindow):
     def __init__(self, image, main_window: "main.MainWindow") -> None:
         super().__init__()
+        self.main_window = main_window
         self.gv = ImageDialog(image)
         self.setCentralWidget(self.gv)
         self.timer = QTimer()

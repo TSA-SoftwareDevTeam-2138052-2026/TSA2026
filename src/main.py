@@ -66,7 +66,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             self.datatools.load_data()
         except FileNotFoundError:
             self.datatools.save_data()
-            
         
     # If i is not equal to the index selected, deactivate it. Else, activate it.
     def set_model(self, checked, model_index: int) -> None:
@@ -118,8 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
         elif pathlib.Path(pathlib.Path.home().as_posix() + "/OneDrive/Videos").exists(): # move to onedrive in case that is preventing videos from working
             file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/OneDrive/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
-
-        
+    
         # Show a dialog to start it
         self.transcribing = SecondaryWindows.TranscribingDialog()
         worker = Worker(self.check_for_transcribe, file_name, self.model)
@@ -175,10 +173,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
 
         
     def open_magnify_dialog(self) -> None:
-        self.magnify_dialog = SecondaryWindows.MagnifyDialog()
-        self.magnify_dialog.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint)
-        self.magnify_dialog.buttonBox.buttons()[0].pressed.connect(self.magnify_dialog.destroy)
-        self.magnify_dialog.magnify.clicked.connect(self.wait_for_magnify)
+        self.magnify_dialog = SecondaryWindows.MagnifyDialog(self)
         self.magnify_dialog.show()
         
     def wait_for_magnify(self) -> None:
