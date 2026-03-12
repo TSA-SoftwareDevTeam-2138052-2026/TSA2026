@@ -147,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     def wait_for_error(self):
         try:
             self.time_mod.sleep(0)
-        except:
+        except AttributeError:
             import time
             self.time_mod = time
         self.time_mod.sleep(5)
