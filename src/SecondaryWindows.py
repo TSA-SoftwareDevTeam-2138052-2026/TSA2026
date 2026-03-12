@@ -29,10 +29,7 @@ is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 basedir = pathlib.Path(__file__).parent
 
-class WindowSuper:
-    def __init__(self):
-        self.datatools = DataTools.DataTools(main.basedir, main.data_location, main.MainWindow(), main.is_pyinstaller)
-        self.main_win = main.MainWindow()
+
 
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
@@ -75,7 +72,7 @@ class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
 
 # The licenses window.
 class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
-    def __init__(self, file_to_read, datatools: DataTools.DataTools) -> None:
+    def __init__(self, file_to_read, datatools: "DataTools.DataTools") -> None:
         super().__init__()
         self.setupUi(self)
         self.label.setText(datatools.load_file_from_self(file_to_read, False))

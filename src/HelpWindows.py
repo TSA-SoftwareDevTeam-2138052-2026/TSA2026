@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     import main
 
 class HelpWin:
-    def __init__(self, main_win: main.MainWindow) -> None:
+    def __init__(self, main_win: "main.MainWindow") -> None:
         self.main = main_win
         
     def open_licenses(self) -> None:
