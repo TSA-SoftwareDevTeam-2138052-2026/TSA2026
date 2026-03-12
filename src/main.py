@@ -9,12 +9,11 @@ if sys.stderr is None:
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QThreadPool, QTimer, Qt
-from PySide6.QtGui import QKeyEvent, QPixmap, QImage, QIcon
+from PySide6.QtGui import QKeyEvent, QIcon
 import pathlib # to get home
 from captions import Captions
 import PyVisualHelp
 import keyboard # keyboard shortcuts
-import pickle
 from ffmpeg_manager import ffmpeg_manager
 
 # Window Imports
@@ -41,8 +40,6 @@ if os.name == "nt":
     except ImportError:
         pass
 
-print("WE PASSED")
-
 class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     # init
     def __init__(self) -> None:
@@ -62,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.openMagnify.clicked.connect(self.open_magnify_dialog) # click magnify button = magnify dialog to magnify for screen
         self.threadpool = QThreadPool() # make a threadpool to run workers
         self.datatools = DataTools.DataTools(basedir, data_location, self, is_pyinstaller)
-        self.help_win = HelpWindows.HelpWin()
+        self.help_win = HelpWindows.HelpWin(self)
         self.__setup_actions__() # setup the actions
         self.setWindowTitle("AudioVisual Helper")
         try:
@@ -141,12 +138,12 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         if file_name != "":
             worker = Worker(self.caption_file, file_name, model_name)
             self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
-            worker.signals.finished.connect(self.show_done_transcript)
+            worker.signals.finished.connect(self.transcribing.show_done_transcript)
             self.threadpool.start(worker)
         elif file_name == "":
             worker = Worker(self.wait_for_error)
-            self.transcribing.transcription_text.setText(f"No video selected")
-            worker.signals.finished.connect(self.destroy_transcribing)
+            self.transcribing.transcription_text.setText("No video selected")
+            worker.signals.finished.connect(self.transcribing.destroy_transcribing)
             self.threadpool.start(worker)
     
     def wait_for_error(self):
@@ -175,27 +172,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
                 print(e)
             file.close()
         return True
-    
-    # Show the done dialog then close after 2 seconds.
-    def show_done_transcript(self) -> None:
-        self.transcribing.transcription_text.setText("Done!")
-        self.timer = QTimer()
-        self.timer.setSingleShot(True)
-        self.timer.setInterval(2000)
-        self.timer.timeout.connect(self.destroy_transcribing)
-        self.transcribing.progressBar.setMaximum(1)
-        self.transcribing.progressBar.setMinimum(0)
-        self.transcribing.progressBar.setValue(1)
-        self.timer.start()
-            
-    # Destroy the transcribing window and delete the timer.    
-    def destroy_transcribing(self) -> None:
-        self.transcribing.destroy()
-        try:
-            self.timer.timeout.disconnect(self.destroy_transcribing)
-            del self.timer
-        except:
-            pass
+
         
     def open_magnify_dialog(self) -> None:
         self.magnify_dialog = SecondaryWindows.MagnifyDialog()

@@ -1,8 +1,11 @@
 import pathlib
 import os
-import main
 import pickle
 import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import main
 
 class DataTools:
     def __init__(self, basedir, datadir, mainwindow: "main.MainWindow", is_pyinstaller:bool) -> None:
@@ -62,8 +65,9 @@ class DataTools:
             self.reset_dialog.setWindowTitle("Reset Preferences")
             self.timer.start()
             self.reset_dialog.exec()
-        except:
+        except FileNotFoundError:
             return False
+        
     
     def load_file_from_self(self, filename: str, is_binary: bool=False):
         data = ""

@@ -12,11 +12,11 @@ dataspath = pathlib.Path(sys.executable)
 basevenv = pathlib.PurePath(*pathlib.Path(sys.executable).parts[:-2])
 filterspath = pathlib.PurePath(basevenv, "Lib", "site-packages", "whisper", "assets", "mel_filters.npz")
 filterspath2 = pathlib.PurePath(basevenv, "Lib", "site-packages", "whisper", "assets", "multilingual.tiktoken")
-datas += [(filterspath, 'whisper\\assets'), (filterspath2, 'whisper\\assets'),('./icon/icon.ico', 'icon'), ('licenses.md', '.')]
+datas += [(filterspath, 'whisper\\assets'), (filterspath2, 'whisper\\assets'),('./icon/icon.ico', 'icon'), ('licenses.md', '.'), ('credits.md', '.'), ('help.md', '.')]
 # end used code section section
 
 a = Analysis(
-    ['src\\app.py'],
+    ['src\\main.py'],
     pathex=[],
     binaries=[],
     datas=datas,

@@ -6,13 +6,18 @@ import ResetPrefDialog
 from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QKeyEvent, QPixmap, QImage
-import main
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import main
 
 import sys
 import os
 import pathlib
 
-import DataTools
+if TYPE_CHECKING:
+    import DataTools
 
 # Needed for libraries to function
 if sys.stdout is None:
@@ -30,37 +35,58 @@ class WindowSuper:
         self.main_win = main.MainWindow()
 
 # The transcribing dialog. Opens from the QT Designer file.
-class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog, WindowSuper):
+class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Transcription")
+    
+    # Show the done dialog then close after 2 seconds.
+    def show_done_transcript(self) -> None:
+        self.transcription_text.setText("Done!")
+        self.timer = QTimer()
+        self.timer.setSingleShot(True)
+        self.timer.setInterval(2000)
+        self.timer.timeout.connect(self.destroy_transcribing)
+        self.progressBar.setMaximum(1)
+        self.progressBar.setMinimum(0)
+        self.progressBar.setValue(1)
+        self.timer.start()
+    
+        # Destroy the transcribing window and delete the timer.    
+    def destroy_transcribing(self) -> None:
+        self.destroy()
+        try:
+            self.timer.timeout.disconnect(self.destroy_transcribing)
+            del self.timer
+        except:
+            pass
 
 # The magnifier window.
-class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow, WindowSuper):
+class MagnifyDialog(MagnifierUI.Ui_MainWindow, QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Magnification")
 
 # The licenses window.
-class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog, WindowSuper):
-    def __init__(self, file_to_read) -> None:
+class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
+    def __init__(self, file_to_read, datatools: DataTools.DataTools) -> None:
         super().__init__()
         self.setupUi(self)
-        self.label.setText(self.datatools.load_file_from_self(file_to_read, False))
+        self.label.setText(datatools.load_file_from_self(file_to_read, False))
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
         self.label.setOpenExternalLinks(True)
 
-class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog, WindowSuper):
+class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Reset Preferences")
 
 # The actual image display for zooming
-class ImageDialog(QtWidgets.QGraphicsView, WindowSuper):
+class ImageDialog(QtWidgets.QGraphicsView):
     def __init__(self, image) -> None:
         super().__init__()
         self.graph_scene = QtWidgets.QGraphicsScene()
@@ -70,8 +96,8 @@ class ImageDialog(QtWidgets.QGraphicsView, WindowSuper):
         self.setScene(self.graph_scene)
 
 # The magnifier window that holds ImageDialog
-class MagnifyWin(QtWidgets.QMainWindow, WindowSuper):
-    def __init__(self, image, window_instance: "main.MainWindow") -> None:
+class MagnifyWin(QtWidgets.QMainWindow):
+    def __init__(self, image, main_window: "main.MainWindow") -> None:
         super().__init__()
         self.gv = ImageDialog(image)
         self.setCentralWidget(self.gv)
@@ -93,4 +119,4 @@ class MagnifyWin(QtWidgets.QMainWindow, WindowSuper):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         self.destroy()
         self.timer.stop()
-        self.main_win.open_magnify_dialog()
+        self.main_window.open_magnify_dialog()
