@@ -33,7 +33,7 @@
           <x>0</x>
           <y>0</y>
           <width>776</width>
-          <height>576</height>
+          <height>544</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -67,6 +67,13 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

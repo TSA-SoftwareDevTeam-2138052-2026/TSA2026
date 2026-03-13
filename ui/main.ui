@@ -115,8 +115,6 @@
      <addaction name="action_set_turbo"/>
     </widget>
     <addaction name="menuChange_Model"/>
-    <addaction name="actionReset_Preferences"/>
-    <addaction name="actionClear_Whisper_Model_Cache"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -125,6 +123,8 @@
     <addaction name="actionShortcuts"/>
     <addaction name="actionLicenses"/>
     <addaction name="actionCredits"/>
+    <addaction name="actionClear_Whisper_Model_Cache"/>
+    <addaction name="actionReset_Preferences"/>
    </widget>
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>

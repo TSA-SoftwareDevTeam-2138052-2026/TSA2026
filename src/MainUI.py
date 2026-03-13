@@ -112,8 +112,6 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuOptions.menuAction())
         self.menuBar.addAction(self.menuHelp.menuAction())
         self.menuOptions.addAction(self.menuChange_Model.menuAction())
-        self.menuOptions.addAction(self.actionReset_Preferences)
-        self.menuOptions.addAction(self.actionClear_Whisper_Model_Cache)
         self.menuChange_Model.addAction(self.action_set_tiny)
         self.menuChange_Model.addAction(self.action_set_base)
         self.menuChange_Model.addAction(self.action_set_small)
@@ -123,6 +121,8 @@ class Ui_MainWindow(object):
         self.menuHelp.addAction(self.actionShortcuts)
         self.menuHelp.addAction(self.actionLicenses)
         self.menuHelp.addAction(self.actionCredits)
+        self.menuHelp.addAction(self.actionClear_Whisper_Model_Cache)
+        self.menuHelp.addAction(self.actionReset_Preferences)
 
         self.retranslateUi(MainWindow)
 

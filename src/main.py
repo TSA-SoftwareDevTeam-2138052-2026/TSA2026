@@ -8,7 +8,7 @@ if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QThreadPool, QTimer, Qt
+from PySide6.QtCore import QThreadPool, QTimer
 from PySide6.QtGui import QKeyEvent, QIcon
 import pathlib # to get home
 from captions import Captions

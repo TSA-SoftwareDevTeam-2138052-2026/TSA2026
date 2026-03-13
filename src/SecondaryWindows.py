@@ -56,7 +56,7 @@ class TranscribingDialog(transcribing_file.Ui_Dialog, QtWidgets.QDialog):
         try:
             self.timer.timeout.disconnect(self.destroy_transcribing)
             del self.timer
-        except:
+        except AttributeError:
             pass
 
 # The magnifier window.
@@ -75,11 +75,16 @@ class TextReadDialog(LicensesWindow.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self, file_to_read, datatools: "DataTools.DataTools") -> None:
         super().__init__()
         self.setupUi(self)
+        self.datatools = datatools
         self.label.setText(datatools.load_file_from_self(file_to_read, False))
         self.label.setWordWrap(True)
         self.scrollArea.setWidgetResizable(True)
         self.label.setOpenExternalLinks(True)
+        self.buttonBox.accepted.connect(self.destroy)
 
+    def change_file(self, file):
+        self.label.setText(self.datatools.load_file_from_self(file, False))
+        
 class ResetPref(QtWidgets.QDialog, ResetPrefDialog.Ui_Dialog):
     def __init__(self) -> None:
         super().__init__()
