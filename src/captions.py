@@ -13,9 +13,6 @@ class Captions:
                 if minutes - 60 >= 0:
                     minutes = 0
                     hours += 1
-                print(seconds_left)
-                print(minutes)
-                print(hours)
         true_seconds = f"{str(seconds_left).split(".")[0]:{"0"}>2}"
         true_ms = f"{float("0." + str(seconds_left).split(".")[1]):.3f}".split(".")[1]
         if len(str(hours)) <= 2:

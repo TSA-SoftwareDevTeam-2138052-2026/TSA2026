@@ -1,16 +1,5 @@
 import whisper_timestamped as whisper
-#recog = sr.Recognizer()
-#
-#from os import path
-#audio = sr.AudioData.from_file("demo_audio.wav")
-
-#try:
-#    print(recog.recognize_google(audio))
-#except:
-#    print("ERROR")
-
-# Real program here
-
+import pathlib
 class PyAudioTranscript:
     # file is as so:
     # id:
@@ -18,7 +7,6 @@ class PyAudioTranscript:
     @classmethod
     def convert_timestamp_to_temp(cls, transcription: dict) -> str:
         current_transcription = ""
-        print(current_transcription)
         for segment in transcription["segments"]:
             # Add segment id
             current_transcription = current_transcription + str(segment["id"]) + ":\n"
@@ -36,10 +24,23 @@ class PyAudioTranscript:
         try:
             recognizer = whisper.load_model(model, device="gpu") # Try faster GPU processing
         except:
-            print("GPU failed. Trying CPU...")
-            recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
+            try:
+                recognizer = whisper.load_model(model, device="cpu") # If unavaliable, try CPU processing.
+            except Exception as e:
+                print(e)
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
+                    file.write(e.__str__())
+                    file.close()
+                exit()
         try:
-            transcription = whisper.transcribe(recognizer, audio)
-            return cls.convert_timestamp_to_temp(transcription)
+            try:
+                transcription = whisper.transcribe(recognizer, audio, beam_size=5, best_of=5, temperature=(0.0,0.2,0.4,0.6,0.8,1.0))
+                return cls.convert_timestamp_to_temp(transcription)
+            except Exception as e:
+                print(e)
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
+                    file.write(e.__str__())
+                    file.close()
+                return "E"
         except Exception as e:
             return str(e)

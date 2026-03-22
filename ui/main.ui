@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>200</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="openMagnify">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+        <fontweight>DemiBold</fontweight>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Opens a menu that allows you to magnify the screen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="whatsThis">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Magnifies the screen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>Open Magnification Menu...</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QPushButton" name="contrast">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Ignored" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+          <fontweight>DemiBold</fontweight>
+         </font>
+        </property>
+        <property name="text">
+         <string>Contrast Screenshot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="transcribe">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>16</pointsize>
+          <fontweight>DemiBold</fontweight>
+         </font>
+        </property>
+        <property name="text">
+         <string>Captions...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <widget class="QMenu" name="menuChange_Model">
+     <property name="title">
+      <string>Change Transcription Model</string>
+     </property>
+     <addaction name="action_set_tiny"/>
+     <addaction name="action_set_base"/>
+     <addaction name="action_set_small"/>
+     <addaction name="action_set_medium"/>
+     <addaction name="action_set_large"/>
+     <addaction name="action_set_turbo"/>
+    </widget>
+    <addaction name="menuChange_Model"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionShortcuts"/>
+    <addaction name="actionLicenses"/>
+    <addaction name="actionCredits"/>
+    <addaction name="actionClear_Whisper_Model_Cache"/>
+    <addaction name="actionReset_Preferences"/>
+   </widget>
+   <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="action_set_tiny">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>tiny (fastest/least accurate)</string>
+   </property>
+  </action>
+  <action name="action_set_base">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>base</string>
+   </property>
+  </action>
+  <action name="action_set_small">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>small</string>
+   </property>
+  </action>
+  <action name="action_set_medium">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>medium</string>
+   </property>
+  </action>
+  <action name="action_set_large">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>large (slowest/most accurate)</string>
+   </property>
+  </action>
+  <action name="action_set_turbo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>turbo (large but faster)</string>
+   </property>
+  </action>
+  <action name="actionCredits">
+   <property name="text">
+    <string>Credits...</string>
+   </property>
+  </action>
+  <action name="actionLicenses">
+   <property name="text">
+    <string>Licenses...</string>
+   </property>
+  </action>
+  <action name="actionShortcuts">
+   <property name="text">
+    <string>Shortcuts...</string>
+   </property>
+  </action>
+  <action name="actionReset_Preferences">
+   <property name="text">
+    <string>Reset Preferences...</string>
+   </property>
+  </action>
+  <action name="actionClear_Whisper_Model_Cache">
+   <property name="text">
+    <string>Clear Whisper Model Cache</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
