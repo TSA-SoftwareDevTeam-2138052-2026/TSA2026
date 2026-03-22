@@ -126,6 +126,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.threadpool.start(worker)
         self.transcribing.exec()
 
+    # check to see if transcribing is imported. if so, then continue, if not, then import it and then transcribe.
     def check_for_transcribe(self, file_name, model_name) -> None:
         try:
             self.transcribe_util
@@ -144,6 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             worker.signals.finished.connect(self.transcribing.destroy_transcribing)
             self.threadpool.start(worker)
     
+    # wait for the error, needed to prevent the ui from locking up. somehow.
     def wait_for_error(self):
         try:
             self.time_mod.sleep(0)
@@ -152,6 +154,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             self.time_mod = time
         self.time_mod.sleep(5)
 
+    # the actual captioning. what we have been waiting for.
     def caption_file(self, file_name, model_name) -> bool:
         ffmpeg_manager.download_ffmpeg()
         # Turn the file into a transcript
@@ -171,11 +174,12 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             file.close()
         return True
 
-        
+    # Open the magnify dialog.
     def open_magnify_dialog(self) -> None:
         self.magnify_dialog = SecondaryWindows.MagnifyDialog(self)
         self.magnify_dialog.show()
-        
+    
+    # Destroy the magnify dialog and wait for animations to finish before showing magnification.
     def wait_for_magnify(self) -> None:
         self.window_open = True
         self.magnify_dialog.magnify.clicked.disconnect(self.wait_for_magnify)
@@ -186,6 +190,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.timer.setSingleShot(True)
         self.timer.start()
     
+    # Magnify the window.
     def magnify(self) -> None:
         del self.magnify_dialog
         self.magnify_util.take_screenshot()
@@ -198,6 +203,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             del self.magnify_window
         return super().keyPressEvent(event)
 
+# main exec code.
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()

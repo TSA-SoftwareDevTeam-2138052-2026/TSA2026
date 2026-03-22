@@ -115,15 +115,27 @@ class MagnifyWin(QtWidgets.QMainWindow):
         self.gv.setTransformationAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.gv.setResizeAnchor(QtWidgets.QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.gv.scale(1.5,1.5)
+        self.current_scale = 1.5
+        self.scale_options = [1, 1.5, 2, 3, 4, 6, 8, 10, 15, 20]
         self.setStyleSheet("border: none;")
         self.gv.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.gv.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)        
+    
     def pre_load(self) -> None:
         self.gv.fitInView(self.gv.image, Qt.AspectRatioMode.KeepAspectRatio)
-        self.gv.scale(1.5,1.5)
+        self.gv.scale(self.current_scale, self.current_scale)
 
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        self.destroy()
-        self.timer.stop()
-        self.main_window.open_magnify_dialog()
+        if event.text() == "=":
+            cur_index = self.scale_options.index(self.current_scale)
+            if cur_index < len(self.scale_options) - 1:
+                self.current_scale = self.scale_options[cur_index + 1]
+        elif event.text() == "-":
+            cur_index = self.scale_options.index(self.current_scale)
+            if cur_index > 0:
+                self.current_scale = self.scale_options[cur_index - 1]
+        else:
+            self.destroy()
+            self.timer.stop()
+            self.main_window.open_magnify_dialog()

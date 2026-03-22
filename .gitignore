@@ -213,5 +213,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Icon Source Files
 /icon/icon_source.blend
 icon/icon_source.blend*
+
+# vs code sessions
+*.code-workspace
