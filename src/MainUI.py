@@ -139,7 +139,7 @@ class Ui_MainWindow(object):
         self.action_set_turbo.setText(QCoreApplication.translate("MainWindow", u"turbo (large but faster)", None))
         self.actionCredits.setText(QCoreApplication.translate("MainWindow", u"Credits...", None))
         self.actionLicenses.setText(QCoreApplication.translate("MainWindow", u"Licenses...", None))
-        self.actionShortcuts.setText(QCoreApplication.translate("MainWindow", u"Shortcuts...", None))
+        self.actionShortcuts.setText(QCoreApplication.translate("MainWindow", u"Guide...", None))
         self.actionReset_Preferences.setText(QCoreApplication.translate("MainWindow", u"Reset Preferences...", None))
         self.actionClear_Whisper_Model_Cache.setText(QCoreApplication.translate("MainWindow", u"Clear Whisper Model Cache", None))
 #if QT_CONFIG(tooltip)
