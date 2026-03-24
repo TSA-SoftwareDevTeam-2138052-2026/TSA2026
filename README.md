@@ -32,5 +32,5 @@ Install the required packages with `pip install -r requirements.txt`. Run the pr
 
 Some convinience shortcuts for your pleasure:
 
-* Control + Shift + Enter: Make a transcript.
-* Control + \\: Show a black and white screenshot.
+* Control + Shift + Enter: Caption a video.
+* Control + \\: Show a contrast-enhanced screenshot.
