@@ -6,6 +6,8 @@
 
 The program's code is in `main`, the branch that (hopefully) you should be on. This contains all the changes we have made. Code is in the `src` folder.
 
+Our team ID is SDHS~2138-1. This ID is also in credits.md, which is shown under Help --> Credits...
+
 ## What is this?
 
 This program has 2 functions:
@@ -26,11 +28,18 @@ or
 
 ## Usage
 
+### Via Release
+
+Download the release zip file, unzip it, and run the executable file within the zip file. It should be on the top level of the zip file, so make sure you extract it to its own directory.
+
+Additionally, you can make a shortcut to it on your desktop.
+
+### Manually
+
 Make a virtual environment with `python -m venv .venv` and activate it (`./venv/Scripts/Activate.ps1` on Powershell, `source ./venv/bin/activate` for UNIX based systems).
 
 Install the required packages with `pip install -r requirements.txt`. Run the program with `python ./src/app.py` and it should open up the main window.
 
-Some convinience shortcuts for your pleasure:
+There is one convenience shortcut for your pleasure:
 
-* Control + Shift + Enter: Caption a video.
 * Control + \\: Show a contrast-enhanced screenshot.
