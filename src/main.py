@@ -47,7 +47,6 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         # initialize the libraries
         self.screenshot_util = PyVisualHelp.Screenshot(data_location)
         keyboard.add_hotkey("ctrl+\\", self.screenshot_util.contrast_screenshot, args=()) #type: ignore
-        keyboard.add_hotkey("ctrl+shift+enter", self.transcribe_item)
         self.magnify_util = PyVisualHelp.Magnify(data_location)
         self.setupUi(self)
         # set the models

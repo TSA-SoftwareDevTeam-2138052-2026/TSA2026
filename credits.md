@@ -1,6 +1,6 @@
 # Credits
 
-Program made by TSA team 2138052
+Program made by TSA Team 2138052
 
 ## Members
 

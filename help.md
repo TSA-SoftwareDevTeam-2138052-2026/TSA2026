@@ -3,14 +3,12 @@
 ## Shortcuts
 
 * Ctrl+\\ - Take high contrast screenshot
-* Ctrl+Shift+\\ - Caption a video
 
 ## Whisper Models
 
 ### What is a model?
 
 The whisper models are Speech-To-Text (STT) modules that convert audio to text. There are 6 models, each on a balance of speed/accuracy. Typically, the smaller models are faster but less accurate, while the larger models are slower but more accurate. The models are compared below:
-
 
 |  Size  | Parameters | English-only model | Multilingual model | Required VRAM | Relative speed |
 |:------:|:----------:|:------------------:|:------------------:|:-------------:|:--------------:|
