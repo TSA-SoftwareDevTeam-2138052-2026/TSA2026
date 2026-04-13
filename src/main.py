@@ -123,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         
         # Show a dialog to start it
         self.threadpool.start(worker)
-        self.transcribing.exec()
+        self.transcribing.show()
 
     # check to see if transcribing is imported. if so, then continue, if not, then import it and then transcribe.
     def check_for_transcribe(self, file_name, model_name) -> None:
