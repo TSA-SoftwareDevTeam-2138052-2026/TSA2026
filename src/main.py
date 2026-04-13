@@ -63,8 +63,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.setWindowTitle("AudioVisual Helper")
         try:
             self.datatools.load_data()
-        except FileNotFoundError:
-            self.datatools.save_data()
+        except KeyError:
+            self.datatools.save_data() # The data didnt exist so we add it.
         
     # If i is not equal to the index selected, deactivate it. Else, activate it.
     def set_model(self, checked, model_index: int) -> None:

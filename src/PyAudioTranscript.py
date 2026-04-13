@@ -19,6 +19,16 @@ class PyAudioTranscript:
         return current_transcription
 
     @classmethod
+    def convert_timestamp_to_transcript(cls, transcription: dict) -> str:
+        current_transcription = ""
+        for segment in transcription["segments"]:
+            # Add words
+            for word in segment["words"]:
+                current_transcription = current_transcription + f"{word['text']} "
+        current_transcription = current_transcription.strip()
+        return current_transcription
+
+    @classmethod
     def turn_into_transcript(cls, audio_file: str, model="base") -> str:
         audio = whisper.load_audio(audio_file)
         try:
