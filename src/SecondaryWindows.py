@@ -2,6 +2,7 @@ import TranscribeDialog
 import MagnifierUI
 import LicensesWindow
 import ResetPrefDialog
+import ModeChooser
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import QTimer, Qt
@@ -29,8 +30,13 @@ is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 basedir = pathlib.Path(__file__).parent
 
-
-
+class TranscriptMode(ModeChooser.Ui_Dialog, QtWidgets.QDialog):
+    def __init__(self, main_win: "main.MainWindow") -> None:
+        super().__init__()
+        self.setupUi(self)
+        self.setWindowTitle("Transcription")
+        self.bothButton.pressed.connect(main_win.)
+    
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(TranscribeDialog.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self) -> None:

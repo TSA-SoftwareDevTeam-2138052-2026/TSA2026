@@ -29,7 +29,7 @@ class PyAudioTranscript:
         return current_transcription
 
     @classmethod
-    def turn_into_transcript(cls, audio_file: str, model="base") -> str:
+    def __preconvert__(cls, audio_file: str, model: str) -> dict:
         audio = whisper.load_audio(audio_file)
         try:
             recognizer = whisper.load_model(model, device="gpu") # Try faster GPU processing
@@ -43,12 +43,39 @@ class PyAudioTranscript:
                     file.close()
                 exit()
         try:
+            transcription = whisper.transcribe(recognizer, audio, beam_size=5, best_of=5, temperature=(0.0,0.2,0.4,0.6,0.8,1.0), initial_prompt="Hello.")
+            return transcription
+        except Exception as e:
+            print(e)
+            with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
+                file.write(e.__str__())
+                file.close()
+            return {"segments": {"id:": 0, "words": ["ERROR", str(e)]}}
+    
+    @classmethod
+    def turn_into_captions(cls, audio_file: str, model: str="base") -> str:
+        transcription = cls.__preconvert__(audio_file, model)
+        try:
             try:
-                transcription = whisper.transcribe(recognizer, audio, beam_size=5, best_of=5, temperature=(0.0,0.2,0.4,0.6,0.8,1.0), initial_prompt="Hello.")
                 return cls.convert_timestamp_to_temp(transcription)
             except Exception as e:
                 print(e)
-                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "w") as file:
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "a") as file:
+                    file.write(e.__str__())
+                    file.close()
+                return "E"
+        except Exception as e:
+            return str(e)
+
+    @classmethod
+    def turn_into_transcript(cls, audio_file: str, model="base") -> str:
+        transcription = cls.__preconvert__(audio_file, model)
+        try:
+            try:
+                return cls.convert_timestamp_to_transcript(transcription)
+            except Exception as e:
+                print(e)
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "a") as file:
                     file.write(e.__str__())
                     file.close()
                 return "E"
