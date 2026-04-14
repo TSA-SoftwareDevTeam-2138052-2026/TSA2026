@@ -1,4 +1,4 @@
-import TranscribeWindow
+import TranscribeDialog
 import MagnifierUI
 import LicensesWindow
 import ResetPrefDialog
@@ -32,7 +32,7 @@ basedir = pathlib.Path(__file__).parent
 
 
 # The transcribing dialog. Opens from the QT Designer file.
-class TranscribingDialog(TranscribeWindow.Ui_MainWindow, QtWidgets.QMainWindow):
+class TranscribingDialog(TranscribeDialog.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self) -> None:
         super().__init__()
         self.setupUi(self)

@@ -15,19 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QLabel, QMainWindow, QProgressBar,
+from PySide6.QtWidgets import (QApplication, QDialog, QLabel, QProgressBar,
     QSizePolicy, QVBoxLayout, QWidget)
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(300, 100)
-        self.centralwidget = QWidget(MainWindow)
-        self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout = QVBoxLayout(self.centralwidget)
+class Ui_Dialog(object):
+    def setupUi(self, Dialog):
+        if not Dialog.objectName():
+            Dialog.setObjectName(u"Dialog")
+        Dialog.resize(418, 100)
+        self.verticalLayout = QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.transcription_text = QLabel(self.centralwidget)
+        self.transcription_text = QLabel(Dialog)
         self.transcription_text.setObjectName(u"transcription_text")
         font = QFont()
         font.setPointSize(12)
@@ -37,7 +35,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.transcription_text)
 
-        self.progressBar = QProgressBar(self.centralwidget)
+        self.progressBar = QProgressBar(Dialog)
         self.progressBar.setObjectName(u"progressBar")
         self.progressBar.setMaximum(0)
         self.progressBar.setValue(0)
@@ -45,15 +43,14 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.progressBar)
 
-        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
+        self.retranslateUi(Dialog)
 
-        QMetaObject.connectSlotsByName(MainWindow)
+        QMetaObject.connectSlotsByName(Dialog)
     # setupUi
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.transcription_text.setText(QCoreApplication.translate("MainWindow", u"Transcribing [FILE]...", None))
+    def retranslateUi(self, Dialog):
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
+        self.transcription_text.setText(QCoreApplication.translate("Dialog", u"Transcribing [FILE]...", None))
     # retranslateUi
 
