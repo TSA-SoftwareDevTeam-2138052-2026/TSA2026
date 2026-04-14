@@ -1,6 +1,7 @@
 import pathlib
 import os
 import pickle
+import shelve
 import sys
 from typing import TYPE_CHECKING
 
@@ -14,38 +15,34 @@ class DataTools:
         self.main = mainwindow
         self.is_pyinstaller = is_pyinstaller
     
+    def __opendata__(self) -> shelve.Shelf:
+        return shelve.open(self.datadir + "/preferences.pkl")
+    
     # dictionary has model key with index within a dictionary
     def save_data(self) -> None:
-        self.save_dict = { 
-            "model": {
-                "index": self.main.model_index
-            }
-        }
-        with open(self.datadir + "/preferences.pkl", "wb") as file:
-            pickle.dump(self.save_dict, file)
-            file.close()
-
-    # self explanatory, loads data
+        data = self.__opendata__()
+        data["model"] = { "index": self.main.model_index }
+        data.close()  
+    
+    # self explanatory, loads data)
     def load_data(self):
-        self.save_dict = {}
-        with open(self.datadir + "/preferences.pkl", "rb") as file:
-            self.save_dict = pickle.load(file)
+        data = self.__opendata__()
         
         # All the data to load, in dictionary sequential order.
-        self.main.set_model(True, self.save_dict["model"]["index"])
+        self.main.set_model(True, data["model"]["index"])
     
     # internal delete directory function
-    def __del_dir__(self, directory: str):
+    def __deldir__(self, directory: str):
         for dirpath, dirnames, filenames in os.walk(directory):
             for dirname in dirnames:
-                self.__del_dir__(os.path.join(dirpath, dirname))
+                self.__deldir__(os.path.join(dirpath, dirname))
             for name in filenames:
                 os.remove(os.path.join(dirpath, name))
         os.removedirs(directory)
         
     # clears the model cache to save storage space
     def clear_model_cache(self):
-        self.__del_dir__(pathlib.Path.home().as_posix() + "/.cache/whisper/")
+        self.__deldir__(pathlib.Path.home().as_posix() + "/.cache/whisper/")
     
     # messy but works
     def reset_data(self):

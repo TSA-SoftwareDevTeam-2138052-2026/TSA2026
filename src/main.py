@@ -63,8 +63,8 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.setWindowTitle("AudioVisual Helper")
         try:
             self.datatools.load_data()
-        except FileNotFoundError:
-            self.datatools.save_data()
+        except KeyError:
+            self.datatools.save_data() # The data didnt exist so we add it.
         
     # If i is not equal to the index selected, deactivate it. Else, activate it.
     def set_model(self, checked, model_index: int) -> None:
@@ -107,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.actionClear_Whisper_Model_Cache.triggered.connect(self.datatools.clear_model_cache)
         
     # transcribe the file
-    def transcribe_item(self) -> None:
+    def transcribe_item(self, mode: str = "captions") -> None:
         # Make a file dialog to select the file
         file_dialog = QtWidgets.QFileDialog()
         file_dialog.setFileMode(file_dialog.FileMode.ExistingFile)
@@ -123,10 +123,10 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         
         # Show a dialog to start it
         self.threadpool.start(worker)
-        self.transcribing.exec()
+        self.transcribing.show()
 
     # check to see if transcribing is imported. if so, then continue, if not, then import it and then transcribe.
-    def check_for_transcribe(self, file_name, model_name) -> None:
+    def check_for_transcribe(self, file_name, model_name, mode: str="captions") -> None:
         try:
             self.transcribe_util
         except AttributeError: #attribute as opposed to name since it is an attribute
@@ -157,7 +157,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
     def caption_file(self, file_name, model_name) -> bool:
         ffmpeg_manager.download_ffmpeg()
         # Turn the file into a transcript
-        temp: str = self.transcribe_util.turn_into_transcript(file_name, model_name)
+        temp: str = self.transcribe_util.turn_into_captions(file_name, model_name)
         
         # get the base name
         file_split = file_name.split(".")
