@@ -30,12 +30,13 @@ is_pyinstaller = getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 basedir = pathlib.Path(__file__).parent
 
+# Work in progress, do not use
 class TranscriptMode(ModeChooser.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self, main_win: "main.MainWindow") -> None:
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("Transcription")
-        self.bothButton.pressed.connect(main_win.)
+        # self.bothButton.pressed.connect(main_win.)
     
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(TranscribeDialog.Ui_Dialog, QtWidgets.QDialog):
