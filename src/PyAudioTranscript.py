@@ -68,7 +68,7 @@ class PyAudioTranscript:
             return str(e)
 
     @classmethod
-    def turn_into_transcript(cls, audio_file: str, model="base") -> str:
+    def turn_into_transcript(cls, audio_file: str, model: str="base") -> str:
         transcription = cls.__preconvert__(audio_file, model)
         try:
             try:
@@ -81,3 +81,35 @@ class PyAudioTranscript:
                 return "E"
         except Exception as e:
             return str(e)
+    
+    @classmethod
+    def do_both_modes(cls, audio_file: str, model: str="base") -> tuple:
+        # transcription
+        transcription = cls.__preconvert__(audio_file, model)
+        temp_list = []
+        try:
+            try:
+                temp_list.append(cls.convert_timestamp_to_transcript(transcription))
+            except Exception as e:
+                print(e)
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "a") as file:
+                    file.write(e.__str__())
+                    file.close()
+                return ("ERROR",)
+        except Exception as e:
+            return (str(e),)
+        
+        # captions
+        try:
+            try:
+                temp_list.append(cls.convert_timestamp_to_temp(transcription))
+            except Exception as e:
+                print(e)
+                with open(pathlib.Path.home().as_posix() + "/AudioVisual_Helper_ERROR.log", "a") as file:
+                    file.write(e.__str__())
+                    file.close()
+                return ("ERROR",)
+        except Exception as e:
+            return (str(e),)
+
+        return tuple(temp_list)

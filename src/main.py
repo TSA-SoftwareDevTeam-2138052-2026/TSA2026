@@ -53,7 +53,7 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
         self.model = "base" # current model to transcribe with
         self.model_index = 1
         # set button actions
-        self.transcribe.clicked.connect(self.transcribe_item) # click transcribe button = transcription
+        self.transcribe.clicked.connect(self.show_transcript_select) # click transcribe button = transcription
         self.contrast.clicked.connect(self.screenshot_util.contrast_screenshot) # click contrast button = screenshot with contrast
         self.openMagnify.clicked.connect(self.open_magnify_dialog) # click magnify button = magnify dialog to magnify for screen
         self.threadpool = QThreadPool() # make a threadpool to run workers
@@ -65,7 +65,11 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             self.datatools.load_data()
         except KeyError:
             self.datatools.save_data() # The data didnt exist so we add it.
-        
+    
+    def show_transcript_select(self):
+        select_transcript = SecondaryWindows.TranscriptMode(self)
+        select_transcript.show()
+    
     # If i is not equal to the index selected, deactivate it. Else, activate it.
     def set_model(self, checked, model_index: int) -> None:
         self.model_index = model_index
@@ -116,15 +120,28 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
         elif pathlib.Path(pathlib.Path.home().as_posix() + "/OneDrive/Videos").exists(): # move to onedrive in case that is preventing videos from working
             file_name = file_dialog.getOpenFileName(self, self.tr("Open Video"), pathlib.Path.home().as_posix() + "/OneDrive/Videos", self.tr("Video files (*.mp4 *.webm *.mpg *.ogg *.avi *.mov *.flv)"))[0]
-    
-        # Show a dialog to start it
-        self.transcribing = SecondaryWindows.TranscribingDialog()
-        worker = Worker(self.check_for_transcribe, file_name, self.model)
-        
-        # Show a dialog to start it
-        self.threadpool.start(worker)
-        self.transcribing.show()
 
+        if mode == "captions":
+            # Show a dialog to start it
+            self.transcribing = SecondaryWindows.TranscribingDialog()
+            worker = Worker(self.check_for_transcribe, file_name, self.model, "captions") 
+            # Show a dialog to start it
+            self.threadpool.start(worker)
+            self.transcribing.show()
+        elif mode == "transcript":
+            self.transcribing = SecondaryWindows.TranscribingDialog()
+            worker = Worker(self.check_for_transcribe, file_name, self.model, "transcript")            
+            # Show a dialog to start it
+            self.threadpool.start(worker)
+            self.transcribing.show()
+        elif mode == "both":
+            self.transcribing = SecondaryWindows.TranscribingDialog()
+            worker = Worker(self.check_for_transcribe, file_name, self.model, "both")            
+            # Show a dialog to start it
+            self.threadpool.start(worker)
+            self.transcribing.show()
+        else:
+            raise Exception("No mode selected; there should be a mode.")
     # check to see if transcribing is imported. if so, then continue, if not, then import it and then transcribe.
     def check_for_transcribe(self, file_name, model_name, mode: str="captions") -> None:
         try:
@@ -134,10 +151,21 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             from PyAudioTranscript import PyAudioTranscript
             self.transcribe_util = PyAudioTranscript()
         if file_name != "":
-            worker = Worker(self.caption_file, file_name, model_name)
-            self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
-            worker.signals.finished.connect(self.transcribing.show_done_transcript)
-            self.threadpool.start(worker)
+            if mode == "captions":
+                worker = Worker(self.caption_file, file_name, model_name)
+                self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+                worker.signals.finished.connect(self.transcribing.show_done_transcript)
+                self.threadpool.start(worker)
+            elif mode == "transcript":
+                worker = Worker(self.transcribe_file, file_name, model_name)
+                self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+                worker.signals.finished.connect(self.transcribing.show_done_transcript)
+                self.threadpool.start(worker)
+            elif mode == "both":
+                worker = Worker(self.do_both, file_name, model_name)
+                self.transcribing.transcription_text.setText(f"Transcribing \"{file_name.split("/")[-1]}\"...")
+                worker.signals.finished.connect(self.transcribing.show_done_transcript)
+                self.threadpool.start(worker)
         elif file_name == "":
             worker = Worker(self.wait_for_error)
             self.transcribing.transcription_text.setText("No video selected")
@@ -153,6 +181,25 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             self.time_mod = time
         self.time_mod.sleep(5)
 
+    def transcribe_file(self, file_name, model_name) -> bool:
+        ffmpeg_manager.download_ffmpeg()
+        # Turn the file into a transcript
+        temp: str = self.transcribe_util.turn_into_transcript(file_name, model_name)
+        
+        # get the base name
+        file_split = file_name.split(".")
+        file_split.pop(-1)
+        
+        # Save the captions to a vtt
+        with open(".".join(file_split) + "_transcript.txt", "w") as file:
+            try:
+                file.write(temp)
+            except Exception as e:
+                print("ERROR")
+                print(e)
+            file.close()
+        return True
+    
     # the actual captioning. what we have been waiting for.
     def caption_file(self, file_name, model_name) -> bool:
         ffmpeg_manager.download_ffmpeg()
@@ -173,6 +220,34 @@ class MainWindow(QtWidgets.QMainWindow, MainUI.Ui_MainWindow):
             file.close()
         return True
 
+    def do_both(self, file_name, model_name) -> bool:
+        ffmpeg_manager.download_ffmpeg()
+        # Turn the file into a transcript
+        temp_tuple: tuple = self.transcribe_util.do_both_modes(file_name, model_name)
+        
+        # get the base name
+        file_split = file_name.split(".")
+        file_split.pop(-1)
+        
+        # Save the captions to a vtt
+        with open(".".join(file_split) + ".vtt", "w") as file:
+            try:
+                file.write(Captions.convert_temp_to_captions(temp_tuple[1], "vtt"))
+            except Exception as e:
+                print("ERROR")
+                print(e)
+            file.close()
+                
+        # Save the transcript to a vtt
+        with open(".".join(file_split) + "_transcript.txt", "w") as file:
+            try:
+                file.write(temp_tuple[0])
+            except Exception as e:
+                print("ERROR")
+                print(e)
+            file.close()
+        return True
+    
     # Open the magnify dialog.
     def open_magnify_dialog(self) -> None:
         self.magnify_dialog = SecondaryWindows.MagnifyDialog(self)

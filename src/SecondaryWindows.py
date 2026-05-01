@@ -35,8 +35,15 @@ class TranscriptMode(ModeChooser.Ui_Dialog, QtWidgets.QDialog):
     def __init__(self, main_win: "main.MainWindow") -> None:
         super().__init__()
         self.setupUi(self)
+        self.main_win = main_win
         self.setWindowTitle("Transcription")
-        # self.bothButton.pressed.connect(main_win.)
+        self.bothButton.pressed.connect(lambda: self.item_selected("both"))
+        self.transcriptButton.pressed.connect(lambda: self.item_selected("transcript"))
+        self.captionsButton.pressed.connect(lambda: self.item_selected("captions"))
+    
+    def item_selected(self, mode):
+        self.main_win.transcribe_item(mode)
+        self.destroy()
     
 # The transcribing dialog. Opens from the QT Designer file.
 class TranscribingDialog(TranscribeDialog.Ui_Dialog, QtWidgets.QDialog):
